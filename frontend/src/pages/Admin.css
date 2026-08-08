@@ -1,0 +1,218 @@
+.admin-page{
+    background:#f5f7fb;
+    min-height:100vh;
+    padding:40px 20px;
+}
+
+.admin-container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.admin-header{
+    max-width:1200px;
+    margin:auto auto 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.admin-header h1{
+    font-size:34px;
+    color:#111827;
+    margin-bottom:8px;
+}
+
+.admin-header p{
+    color:#6b7280;
+}
+
+.admin-stats{
+    display:flex;
+    gap:20px;
+}
+
+.stat-card{
+    background:#fff;
+    padding:20px 35px;
+    border-radius:15px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    text-align:center;
+}
+
+.stat-card h2{
+    color:#d4a017;
+    margin:0;
+    font-size:34px;
+}
+
+.stat-card span{
+    color:#666;
+    font-size:14px;
+}
+
+.product-form-card{
+    background:#fff;
+    border-radius:18px;
+    padding:35px;
+    margin-bottom:35px;
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+}
+
+.product-form-card h2{
+    margin-bottom:25px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:20px;
+}
+
+.product-form-card label{
+    display:block;
+    font-weight:600;
+    margin-bottom:8px;
+    color:#222;
+}
+
+.product-form-card input,
+.product-form-card textarea{
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:15px;
+    transition:.3s;
+    box-sizing:border-box;
+}
+
+.product-form-card textarea{
+    height:140px;
+    resize:vertical;
+    margin-top:15px;
+}
+
+.product-form-card input:focus,
+.product-form-card textarea:focus{
+    outline:none;
+    border-color:#d4a017;
+    box-shadow:0 0 0 4px rgba(212,160,23,.15);
+}
+
+.image-upload{
+    margin-bottom:25px;
+}
+
+.selected-image{
+    margin-top:10px;
+    color:#16a34a;
+    font-weight:600;
+}
+
+.checkbox{
+    display:flex !important;
+    align-items:center;
+    gap:12px;
+    margin:20px 0;
+}
+
+.checkbox input{
+    width:20px;
+    height:20px;
+}
+
+.save-btn{
+    background:#d4a017;
+    color:#fff;
+    border:none;
+    padding:15px;
+    width:100%;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:18px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.save-btn:hover{
+    background:#b8890f;
+    transform:translateY(-2px);
+}
+
+.table-card{
+    background:#fff;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+}
+
+.table-card h2{
+    padding:25px;
+    margin:0;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    background:#111827;
+    color:white;
+}
+
+th{
+    padding:18px;
+}
+
+td{
+    padding:16px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+}
+
+tbody tr:hover{
+    background:#f9fafb;
+}
+
+.product-image{
+    width:75px;
+    height:75px;
+    border-radius:12px;
+    object-fit:cover;
+}
+
+.delete-btn{
+    background:#ef4444;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.delete-btn:hover{
+    background:#dc2626;
+}
+
+@media(max-width:768px){
+
+.admin-header{
+    flex-direction:column;
+    align-items:flex-start;
+}
+
+table{
+    display:block;
+    overflow-x:auto;
+}
+
+.product-form-card{
+    padding:20px;
+}
+
+}

@@ -1,0 +1,64 @@
+.shoe-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.shoe-item {
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  transition: box-shadow 0.2s;
+}
+.shoe-item:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+.shoe-item img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+.shoe-info {
+  padding: 16px;
+}
+.shoe-category {
+  font-size: 12px;
+  color: #e93a0e;
+  text-transform: uppercase;
+  margin: 0 0 4px 0;
+  font-weight: 600;
+}
+.shoe-item h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #222;
+}
+.shoe-desc {
+  color: #666;
+  font-size: 14px;
+  margin: 0 0 12px 0;
+  min-height: 40px;
+}
+.shoe-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 12px 0;
+}
+.add-to-cart-btn {
+  width: 100%;
+  background: #e93a0e;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.add-to-cart-btn:hover {
+  background: #d1320c;
+}
