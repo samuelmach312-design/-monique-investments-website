@@ -1,0 +1,14 @@
+﻿node_modules
+dist
+.env
+.env.local
+*.db
+*.exe
+*.dat
+agent-x64/
+bin/
+ios/
+pemhttpd*
+postgis*
+postgresql*
+edb_*
