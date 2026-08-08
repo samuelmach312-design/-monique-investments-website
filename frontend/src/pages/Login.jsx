@@ -74,12 +74,9 @@ export default function Login() {
         </form>
 
         <div className="mt-4 text-center">
-          <button 
-            onClick={() => alert('Contact +254 748 440 035 to reset password')}
-            className="text-sm text-gray-600 hover:text-gray-900"
-          >
+          <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-gray-900">
             Forgot password?
-          </button>
+          </Link>
         </div>
 
         <p className="text-center text-sm text-gray-600 mt-6">

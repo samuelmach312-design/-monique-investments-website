@@ -25,13 +25,12 @@ router.post('/login', (req, res) => {
     });
   }
 
-  // Don't send password back
   const { password: _, ...userWithoutPassword } = user;
   
   res.json({ 
     success: true, 
     user: userWithoutPassword,
-    token: 'fake-jwt-token-' + user.id // Replace with real JWT later
+    token: 'fake-jwt-token-' + user.id
   });
 });
 
@@ -70,8 +69,31 @@ router.post('/signup', (req, res) => {
   });
 });
 
+// Forgot Password - NEW
+router.post('/forgot-password', (req, res) => {
+  const { email } = req.body;
+  
+  if (!email) {
+    return res.status(400).json({ success: false, error: 'Email required' });
+  }
+
+  const user = users.find(u => u.email === email);
+  
+  if (!user) {
+    return res.status(404).json({ success: false, error: 'Email not found' });
+  }
+
+  // Reset to 123456
+  user.password = '123456';
+  
+  res.json({ 
+    success: true, 
+    message: 'Password has been reset to 123456. Please login with new password.',
+    resetLink: '/login'
+  });
+});
+
 router.get('/me', (req, res) => {
-  // Mock - in real app you'd verify JWT
   res.json({ success: true, user: null });
 });
 
