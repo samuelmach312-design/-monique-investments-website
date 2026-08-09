@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 export default function AdminLayout() {
-  const API = (import.meta.env.VITE_API_URL || 'https://sams-project-website.onrender.com/api').trim();
+  const API = 'http://localhost:3001/api/mongo-products';
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
@@ -12,7 +12,11 @@ export default function AdminLayout() {
   const [form, setForm] = useState({ name:'', brand:'Monique', category:'Shoes', size:'42', sellingPrice:'', stock:'10', image:'', description:'' });
 
   const load = async () => {
-    try { setLoading(true); const r = await axios.get(API + '/mongo-products'); setProducts(r.data); }
+    try {
+      setLoading(true);
+      const r = await axios.get(API);
+      setProducts(Array.isArray(r.data)? r.data : r.data.products || []);
+    }
     catch(e){ console.error(e) } finally { setLoading(false) }
   };
   useEffect(()=>{ load() },[]);
@@ -36,12 +40,12 @@ export default function AdminLayout() {
     e.preventDefault();
     const payload = { name:form.name, brand:form.brand, category:form.category, size:form.size, sellingPrice:Number(form.sellingPrice), price:Number(form.sellingPrice), stock:Number(form.stock), image:form.image||'https://images.unsplash.com/photo-1542291026-7eec264c27ff', description:form.description };
     try {
-      if(editing) await axios.put(API + '/mongo-products/' + editing, payload);
-      else await axios.post(API + '/mongo-products', payload);
+      if(editing) await axios.put(API + '/' + editing, payload);
+      else await axios.post(API, payload);
       setShowModal(false); load();
     } catch(err){ alert(err.response?.data?.error || err.message) }
   };
-  const del = async (id) => { if(!confirm('Delete product permanently?')) return; await axios.delete(API + '/mongo-products/'+id); load(); };
+  const del = async (id) => { if(!confirm('Delete product permanently?')) return; await axios.delete(API + '/'+id); load(); };
 
   return (
     <div className="min-h-screen bg-[#f8f9fb] flex font-[Inter]">
@@ -49,12 +53,12 @@ export default function AdminLayout() {
       <div className="w- bg-[#0a0a0a] text-white p-7 flex flex-col fixed h-full">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white text-black rounded-xl flex items-center justify-center font-black">M</div>
-          <div><div className="font-black leading-none">MONIQUE</div><div className="text- tracking-[0.3em] opacity-60">INVESTMENTS</div></div>
+          <div><div className="font-black leading-none">MONIQUE</div><div className="text-xs tracking-[0.3em] opacity-60">INVESTMENTS</div></div>
         </div>
         <div className="mt-10 space-y-2 text-sm">
           <div className="bg-white text-black px-4 py-3 rounded-xl font-bold flex justify-between">Products <span className="bg-black text-white px-2 rounded-full text-xs">{products.length}</span></div>
           <a href="/" className="px-4 py-3 rounded-xl block opacity-60 hover:bg-white/10">← Back to Store</a>
-          <div className="px-4 py-3 rounded-xl opacity-40 text-xs mt-6">API: {API.replace('https://','')}</div>
+          <div className="px-4 py-3 rounded-xl opacity-40 text-xs mt-6">API: localhost:3001/api</div>
         </div>
         <div className="mt-auto bg-white/5 p-4 rounded-2xl">
           <div className="text-xs opacity-60">Total Inventory Value</div>
@@ -72,10 +76,10 @@ export default function AdminLayout() {
 
         {/* STATS */}
         <div className="grid grid-cols-4 gap-4 mt-8">
-          <div className="bg-white p-5 rounded- border"><div className="text-xs text-gray-400 uppercase tracking-widest">Total Products</div><div className="text-3xl font-black mt-2">{stats.count}</div><div className="text-xs text-green-600 mt-2">● Live in store</div></div>
-          <div className="bg-white p-5 rounded- border"><div className="text-xs text-gray-400 uppercase tracking-widest">Brands</div><div className="text-3xl font-black mt-2">{stats.brands}</div><div className="text-xs text-gray-500 mt-2">Monique, Nike, Adidas...</div></div>
-          <div className="bg-white p-5 rounded- border"><div className="text-xs text-gray-400 uppercase tracking-widest">Low Stock</div><div className="text-3xl font-black mt-2 text-amber-600">{stats.low}</div><div className="text-xs text-amber-600 mt-2">Need restock</div></div>
-          <div className="bg-black text-white p-5 rounded-"><div className="text-xs opacity-60 uppercase tracking-widest">Inventory Value</div><div className="text-3xl font-black mt-2">KSh {(stats.value/1000).toFixed(0)}k</div><div className="text-xs opacity-60 mt-2">Retail value</div></div>
+          <div className="bg-white p-5 rounded-2xl border"><div className="text-xs text-gray-400 uppercase tracking-widest">Total Products</div><div className="text-3xl font-black mt-2">{stats.count}</div><div className="text-xs text-green-600 mt-2">✓ Live in store</div></div>
+          <div className="bg-white p-5 rounded-2xl border"><div className="text-xs text-gray-400 uppercase tracking-widest">Brands</div><div className="text-3xl font-black mt-2">{stats.brands}</div><div className="text-xs text-gray-500 mt-2">Monique, Nike, Adidas...</div></div>
+          <div className="bg-white p-5 rounded-2xl border"><div className="text-xs text-gray-400 uppercase tracking-widest">Low Stock</div><div className="text-3xl font-black mt-2 text-amber-600">{stats.low}</div><div className="text-xs text-amber-600 mt-2">Need restock</div></div>
+          <div className="bg-black text-white p-5 rounded-2xl"><div className="text-xs opacity-60 uppercase tracking-widest">Inventory Value</div><div className="text-3xl font-black mt-2">KSh {(stats.value/1000).toFixed(0)}k</div><div className="text-xs opacity-60 mt-2">Retail value</div></div>
         </div>
 
         {/* FILTERS */}
@@ -88,9 +92,9 @@ export default function AdminLayout() {
         </div>
 
         {/* TABLE */}
-        <div className="bg-white mt-4 rounded- border overflow-hidden">
+        <div className="bg-white mt-4 rounded-2xl border overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-[#fcfcfc] text- tracking-widest uppercase text-gray-400"><tr><th className="text-left p-4 pl-6">Product</th><th>Category</th><th>Size</th><th>Price</th><th>Stock</th><th className="text-right pr-6">Actions</th></tr></thead>
+            <thead className="bg-[#fcfcfc] text-xs tracking-widest uppercase text-gray-400"><tr><th className="text-left p-4 pl-6">Product</th><th>Category</th><th>Size</th><th>Price</th><th>Stock</th><th className="text-right pr-6">Actions</th></tr></thead>
             <tbody>
               {filtered.map(p=>(
                 <tr key={p._id} className="border-t hover:bg-gray-50/80 group">
@@ -111,7 +115,7 @@ export default function AdminLayout() {
       {/* MODAL */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-          <form onSubmit={submit} className="bg-white w-full max-w- rounded- p-8">
+          <form onSubmit={submit} className="bg-white w-full max-w-lg rounded-2xl p-8">
             <div className="flex justify-between items-center"><h2 className="text-xl font-black">{editing?'Edit Product':'New Product'}</h2><button type="button" onClick={()=>setShowModal(false)} className="w-8 h-8 bg-gray-100 rounded-full">✕</button></div>
             <div className="grid grid-cols-2 gap-3 mt-6">
               <input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Product name" className="col-span-2 border p-3.5 rounded-xl text-sm" required />
