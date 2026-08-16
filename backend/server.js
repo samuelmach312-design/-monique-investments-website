@@ -36,4 +36,5 @@ app.get('/api/products', async (req,res)=>{
   }
 });
 
-app.listen(3001, ()=> console.log('🚀 Neon Server running on http://localhost:3001 - Try /api/products'));
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, ()=> console.log(`🚀 Neon Server running on port ${PORT} - Try /api/products`));
