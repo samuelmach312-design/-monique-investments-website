@@ -368,6 +368,15 @@ export default function Home() {
               description: "Microfiber kitchen handtowels - long version. Multiple colors: blue, purple, yellow, red, green.",
               image_url: "/images/handtowels.jpg"
             },
+            {
+              id: 38,
+              name: "Adidas Samba Black White",
+              price: 3500,
+              category: "Shoes",
+              brand: "Adidas",
+              description: "Adidas Samba Black White - classic sneakers. Sizes 40-45",
+              image_url: "/images/samba.jpg"
+            },
           ]
         }
 
