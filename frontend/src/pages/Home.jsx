@@ -467,6 +467,96 @@ export default function Home() {
               description: "Converse All Star low snakeskin maroon. Sizes 40-45",
               image_url: "/images/converse-low-snakeskin-maroon.jpg"
             },
+            {
+              id: 49,
+              name: "Nike AF1 Low x Chrome Hearts Olive White",
+              price: 3800,
+              category: "Shoes",
+              brand: "Nike",
+              description: "Chrome Hearts edition AF1 olive green/white with cross prints and charm. Sizes 40-45",
+              image_url: "/images/nike-af1-chrome-hearts-olive.jpg"
+            },
+            {
+              id: 50,
+              name: "Nike AF1 Low White Silver Chrome Swoosh",
+              price: 3500,
+              category: "Shoes",
+              brand: "Nike",
+              description: "Nike AF1 triple white with liquid metal silver swoosh and chrome lace dubrae. Sizes 37-45",
+              image_url: "/images/nike-af1-chrome-swoosh-white.jpg"
+            },
+            {
+              id: 51,
+              name: "Jordan 3 Retro Washed Denim Pink",
+              price: 4500,
+              category: "Shoes",
+              brand: "Jordan",
+              description: "Jordan 3 washed denim white/light blue with pink Jumpman. Sizes 40-45",
+              image_url: "/images/jordan-3-washed-denim-pink.jpg"
+            },
+            {
+              id: 52,
+              name: "Vans Authentic Corduroy Black White",
+              price: 2200,
+              category: "Shoes",
+              brand: "Vans",
+              description: "Vans Authentic corduroy black with white sole and laces. Sizes 37-45",
+              image_url: "/images/vans-corduroy-black-white.jpg"
+            },
+            {
+              id: 53,
+              name: "Vans Authentic Corduroy Triple Black",
+              price: 2200,
+              category: "Shoes",
+              brand: "Vans",
+              description: "Vans triple black corduroy. All black authentic. Sizes 37-45",
+              image_url: "/images/vans-corduroy-triple-black.jpg"
+            },
+            {
+              id: 54,
+              name: "Nike AF1 Low Pink Beige Gold Charm",
+              price: 3500,
+              category: "Shoes",
+              brand: "Nike",
+              description: "Nike AF1 custom pink/beige/cream with gold chain pendant. Sizes 37-41",
+              image_url: "/images/nike-af1-pink-beige-gold.jpg"
+            },
+            {
+              id: 55,
+              name: "Vans Authentic Corduroy Navy White",
+              price: 2200,
+              category: "Shoes",
+              brand: "Vans",
+              description: "Vans navy blue corduroy with white sole. Sizes 37-45",
+              image_url: "/images/vans-corduroy-navy-white.jpg"
+            },
+            {
+              id: 56,
+              name: "Vans Authentic Corduroy Grey White",
+              price: 2200,
+              category: "Shoes",
+              brand: "Vans",
+              description: "Vans grey corduroy with white sole and laces. Sizes 37-45",
+              image_url: "/images/vans-corduroy-grey-white.jpg"
+            },
+            {
+              id: 57,
+              name: "Vans Authentic Corduroy Black Grey Two-Tone",
+              price: 2200,
+              category: "Shoes",
+              brand: "Vans",
+              description: "Vans black/grey two-tone corduroy with black laces. Sizes 37-45",
+              image_url: "/images/vans-corduroy-black-grey.jpg"
+            },
+            {
+              id: 58,
+              name: "Nike AF1 Low Wheat Mocha Black",
+              price: 3500,
+              category: "Shoes",
+              brand: "Nike",
+              description: "Nike AF1 wheat mocha brown/black with gum sole. Sizes 40-45",
+              image_url: "/images/nike-af1-wheat-mocha.jpg"
+            },
           ]
         }
 
