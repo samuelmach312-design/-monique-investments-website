@@ -377,6 +377,96 @@ export default function Home() {
               description: "Adidas Samba Black White - classic sneakers. Sizes 40-45",
               image_url: "/images/samba.jpg"
             },
+            {
+              id: 39,
+              name: "Nike Air Force 1 Undefeated Beige Navy",
+              price: 3500,
+              category: "Shoes",
+              brand: "Nike",
+              description: "Nike AF1 x Undefeated - beige, brown, navy, grey. Limited edition. Sizes 40-45",
+              image_url: "/images/nike-af1-undefeated-beige.jpg"
+            },
+            {
+              id: 40,
+              name: "Nike Air Force 1 White Burgundy",
+              price: 3500,
+              category: "Shoes",
+              brand: "Nike",
+              description: "Nike AF1 Low white with burgundy sole. Premium leather. Sizes 40-45",
+              image_url: "/images/nike-af1-white-burgundy.jpg"
+            },
+            {
+              id: 41,
+              name: "Nike Air Max 90 Surplus Grey",
+              price: 3800,
+              category: "Shoes",
+              brand: "Nike",
+              description: "Nike Air Max 90 Surplus grey with red accent. Sizes 40-45",
+              image_url: "/images/nike-air-max-90-grey-surplus.jpg"
+            },
+            {
+              id: 42,
+              name: "Jordan 1 Low Travis Olive Brown",
+              price: 4000,
+              category: "Shoes",
+              brand: "Jordan",
+              description: "Jordan 1 Low x Travis style olive, beige, brown suede. Sizes 40-45",
+              image_url: "/images/jordan-1-low-travis-olive.jpg"
+            },
+            {
+              id: 43,
+              name: "Nike Air Max Plus TN Black Volt",
+              price: 4200,
+              category: "Shoes",
+              brand: "Nike",
+              description: "Nike TN Air Max Plus black volt green. Sizes 40-45",
+              image_url: "/images/nike-tn-black-volt.jpg"
+            },
+            {
+              id: 44,
+              name: "Nike Air Max Plus TN Black Blue",
+              price: 4200,
+              category: "Shoes",
+              brand: "Nike",
+              description: "Nike TN Air Max Plus black university blue. Sizes 40-45",
+              image_url: "/images/nike-tn-black-blue.jpg"
+            },
+            {
+              id: 45,
+              name: "Converse All Star Low Brown Leather",
+              price: 2500,
+              category: "Shoes",
+              brand: "Converse",
+              description: "Converse Chuck Taylor All Star low brown leather. Sizes 40-45",
+              image_url: "/images/converse-low-brown-leather.jpg"
+            },
+            {
+              id: 46,
+              name: "Nike Air Force 1 Triple Black",
+              price: 3500,
+              category: "Shoes",
+              brand: "Nike",
+              description: "Nike AF1 Low triple black. Classic. Sizes 40-45",
+              image_url: "/images/nike-af1-triple-black.jpg"
+            },
+            {
+              id: 47,
+              name: "Converse Low Snakeskin Black",
+              price: 2500,
+              category: "Shoes",
+              brand: "Converse",
+              description: "Converse All Star low snakeskin black. Sizes 40-45",
+              image_url: "/images/converse-low-snakeskin-black.jpg"
+            },
+            {
+              id: 48,
+              name: "Converse Low Snakeskin Maroon",
+              price: 2500,
+              category: "Shoes",
+              brand: "Converse",
+              description: "Converse All Star low snakeskin maroon. Sizes 40-45",
+              image_url: "/images/converse-low-snakeskin-maroon.jpg"
+            },
           ]
         }
 
