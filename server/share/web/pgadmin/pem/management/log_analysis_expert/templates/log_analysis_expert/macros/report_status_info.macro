@@ -1,0 +1,23 @@
+{% macro Element(icon, label, id, value) -%}
+<div class="d-flex my-auto mr-4">
+  <div class="text-gray-darker d-flex my-auto pl-2 pr-2">
+    <span class="my-auto pr-2"><i class="pem-report-icon {{ icon }}"></i></span>
+    <span class="my-auto">{{ label|safe }}</span>
+  </div>
+  <div class="d-flex my-auto">
+    <span class="{{ id }}">{{ value|safe }}</span>
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro FO_Element(icon, label, id, value) -%}
+<div class="d-flex my-auto mr-4">
+  <div class="text-gray-darker d-flex my-auto pl-2 pr-2">
+    <span class="my-auto pr-2"><i class="fa fa-{{ icon }}"></i></span>
+    <span class="my-auto">{{ label|safe }}</span>
+  </div>
+  <div class="d-flex my-auto">
+    <span class="{{ id }}">{{ value|safe }}</span>
+  </div>
+</div>
+{%- endmacro %}

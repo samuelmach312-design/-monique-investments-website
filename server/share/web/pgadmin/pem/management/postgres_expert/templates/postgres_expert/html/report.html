@@ -1,0 +1,224 @@
+{% extends "html/report_base.html" %}
+{% import 'macros/report_title.macro' as TITLE %}
+{% set NO_SUUGESTION_MSG = _('No suggestion is available for the selected rules.') %}
+{% block title %} {{ _("Postgres Expert Report") }} {% endblock %}
+
+{% block report_header_text %}
+    {{ TITLE.TitleElement("Postgres Expert Report") }}
+{%endblock%}
+
+{% block loading_text %}
+{%endblock%}
+
+{% block status_element_block %}
+    <ul class="status-info pull-left p-2">
+    {{ INFO.element(
+      'pem-dashboard-icon icon-date_time',
+      gettext("Generated On:"), 'report_generated', report_time
+    ) }}
+    </ul>
+
+    {% if is_goto_dropdown_required %}
+    <div class="pull-right p-1 d-flex">
+        <span class="my-auto mr-2">
+            <span class="my-auto">{{ _('Go to: ') }}</span>
+        </span>
+        <span>
+            <select id="menu" class="select-font-size form-control">
+                {% for server in report_data %}
+                <option value="{{server.description}}">{{server.description}}</option>
+                {% endfor %}
+            </select>
+        </span>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block css_block %}
+  {# Embed files #}
+  {% for css_file in css_files %}
+    {{ css_file|safe }}
+  {% endfor %}
+{% endblock %}
+
+{% block dashboard_body %}
+
+<div class="row mb-2">
+    <div class="col-12">
+        <div class="dashboard-body">
+            <div class="card mb-2">
+                <div class="card-header d-flex">
+                    <div class="label mr-auto pl-2 pr-2">{{ _('Summary') }}</div>
+                </div>
+                <div class="card-body pt-2 pb-2 dashboard-info">
+                    <div class="status-element d-flex">
+                        {{ INFO.element(
+                          'fa fa-server',
+                          gettext("Servers Tested: "),
+                          'servers_tested', total_servers
+                        ) }}
+                        {{ INFO.element(
+                          'pem-dashboard-icon icon-rules_checked',
+                          gettext("Rules Checked: "),
+                          'rules_checked', total_rules
+                        ) }}
+                        {{ INFO.element(
+                          'postgres-expert-icon icon-high',
+                          gettext("High Alerts: "),
+                          'high_alerts', high_alerts
+                        ) }}
+                        {{ INFO.element(
+                          'postgres-expert-icon icon-medium',
+                          gettext("Medium Alerts: "),
+                          'medium_alerts', medium_alerts
+                        ) }}
+                        {{ INFO.element(
+                          'postgres-expert-icon icon-low',
+                          gettext("Low Alerts: "),
+                          'low_alerts', low_alerts
+                        ) }}
+                   </div>
+                </div>
+            </div>
+
+            {% for server in report_data %}
+            {% set serverloop = loop %}
+                <div class="card accordian section">
+                    <div class="card-header clearfix collapsed" data-toggle="collapse" data-target="#section-{{loop.index}}" aria-expanded="true">
+                        <div class="btn collapse-handle float-left negative-bg" tabindex="0" aria-label="{{ gettext("collapse/expand button") }}">
+                            <div class="caret"></div>
+                        </div>
+                        <div id="Server-{{loop.index}}" class="label float-left pr-2 pl-2">Server: {{server.description}} ({{server.host}}:{{server.port}})</div>
+                    </div>
+
+                    <div id="section-{{loop.index}}" class="card-body negative-bg collapse">
+                        <div class="dashboard-row row">
+                            <div class="chart-container col-12 table-container" tabindex="0">
+                                {% if server.experts|length == 0 %}
+                                    <span class="table my-auto d-flex justify-content-center p-2">
+                                        <em class="fa fa-info my-auto pr-2" role="img"></em>
+                                        <span class="my-auto">{{ NO_SUUGESTION_MSG }}</span>
+                                    </span>
+                                {% else %}
+                                    {% for expert in server.experts %}
+                                    <div class="card mb-2">
+                                        <div class="card-header">
+                                            <div class="label font-weight-bold">{{ _('Advisor: ') }} {{expert.name}}</div>
+                                        </div>
+                                        <div class="card-body">
+                                            {% set exploop = loop %}
+                                            {% if expert.rules %}
+                                            <table class="table presentation table-bordered table-border-radius table-noouter-border pg_expert">
+                                                <caption class="d-none">{{ _('Database rules and severity') }}</caption>
+                                                <thead>
+                                                <tr>
+                                                    <th role="columnheader" scope="col" class="no-sort w-50">{{ _('Rule') }}</th>
+                                                    <th role="columnheader" scope="col" class="no-sort w-25">{{ _('Database') }}</th>
+                                                    <th role="columnheader" scope="col" class="no-sort w-25">{{ _('Severity') }}</th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                {% for rule in expert.rules %}
+                                                {% set ruleloop = loop %}
+                                                <tr>
+                                                    <td class="accordian section m-0 p-0">
+                                                        <div class="card-header clearfix collapsed" data-toggle="collapse" data-target="#sub-section-{{serverloop.index}}{{exploop.index}}{{loop.index}}" aria-expanded="true">
+                                                            <div class="btn collapse-handle float-left negative-bg" tabindex="0" aria-label="{{ gettext("collapse/expand button") }}">
+                                                                <div class="caret"></div>
+                                                            </div>
+                                                            <div class="label float-left pr-2 pl-2 border-0">
+                                                                {{rule.name}}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{rule.database}}</td>
+                                                    <td>
+                                                        {% if rule.severity == 9 %}
+                                                            {{ INFO.element('postgres-expert-icon icon-high', gettext("High"), 'high_alerts', ) }}
+                                                        {% elif rule.severity == 5 %}
+                                                            {{ INFO.element('postgres-expert-icon icon-medium', gettext("Medium"), 'medium_alerts', ) }}
+                                                        {% elif rule.severity == 1 %}
+                                                            {{ INFO.element('postgres-expert-icon icon-low', gettext("Low"), 'low_alerts', ) }}
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                <tr class="negative-bg collapse" id="sub-section-{{serverloop.index}}{{exploop.index}}{{loop.index}}">
+                                                    <td colspan="3" class="m-0 p-0 report-td">
+                                                        <div class="card-body negative-bg ml-4">
+                                                            <div class="dashboard-row row no-gutters">
+                                                                <div class="chart-container col-12 row table-container" tabindex="0">
+                                                                    <div class="col-4">
+                                                                        <div class="mb-2">
+                                                                            <strong>{{ _('Recommended Value: ') }} </strong>
+                                                                            <span>{{rule.recommend}}</span>
+                                                                        </div>
+                                                                        {% if rule.data %}
+                                                                            <div class="mb-2"><strong>{{ _('Current Values: ') }}</strong></div>
+                                                                            <div class="border table-border-radius overflow-auto">
+                                                                                <table class="table presentation table-bordered table-border-radius table-hover table-noouter-border">
+                                                                                    <caption class="d-none">{{ _('Settings and values') }}</caption>
+                                                                                <thead>
+                                                                                  <tr>
+                                                                                      <th role="columnheader" scope="col" class="no-sort">{{ _('Settings') }}</th>
+                                                                                      <th role="columnheader" scope="col" class="no-sort">{{ _('Value') }}</th>
+                                                                                  </tr>
+                                                                                </thead>
+                                                                             <!-- Display current value for each setting in a rule -->
+                                                                            {% for data in rule.data %}
+                                                                                <tr>
+                                                                                    <td>{{data.name}}</td>
+                                                                                    <td>{{data.value}}</td>
+                                                                                </tr>
+                                                                            {% endfor %}
+                                                                            </table>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="col-8">
+                                                                        <div class="mb-2">
+                                                                            <strong>{{ _('Trigger: ') }} </strong>
+                                                                            <span>{{rule.trigger}}</span>
+                                                                        </div>
+                                                                        <div>                                                                <div class="mb-2">
+                                                                            <strong>{{ _('Description: ') }}</strong><br>
+                                                                            <span>{{rule.desc}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                </tbody>
+
+                                            </table>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if not is_goto_dropdown_required %}
+            <div role="status" class="alert alert-info pg-panel-message pg-panel-depends-message">
+                {{ NO_SUUGESTION_MSG }}
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script_block %}
+  {% for js_file in js_files %}
+    {{ js_file|safe }}
+  {% endfor %}
+{% endblock %}

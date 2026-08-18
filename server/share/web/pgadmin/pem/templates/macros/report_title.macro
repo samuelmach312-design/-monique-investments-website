@@ -1,0 +1,16 @@
+{% macro TitleElement(label) -%}
+
+<div class="dashboard-breadcrumb d-flex">
+    <div class="breadcrumb-menu d-flex">
+        <div class="dropdown">
+            <button type="button" class="btn btn-primary dropdown-toggle font-weight-bold pem-report">
+                <span title="{{label}}">{{ label|safe }}</span>
+            </button>
+            <div class="dropdown-menu">
+            </div>
+        </div>
+    <div class="right-arrow"></div>
+    </div>
+</div>
+
+{%- endmacro %}

@@ -1,0 +1,71 @@
+{% import 'macros/dashboard_report_status_info.macro' as INFO %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+    <head>
+        <meta charset="utf-8" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+        <title>{% block title %}{% endblock %}</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- Specified stylesheet links -->
+        <style type="text/css">
+        {% block css_block %}{% endblock %}
+        </style>
+    </head>
+    <body class="report">
+        <!--[if lt IE 11]>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+            your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <!-- Common for all the dashboard -->
+        <div class="container-fluid negative-space">
+            <div id="fetching_data" class="pg-sp-container d-none">
+                <div class="pg-sp-content">
+                    <div class="row">
+                        <div class="col-12 pg-sp-icon"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 pg-sp-text">
+                            {% block loading_text %}
+                            {%endblock%}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-container">
+                <!-- Header for Dashboard -->
+                <div class="row mb-2 dashboard-header">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex dashboard-breadcrumb-container">
+                                {% block report_header_text %} {%endblock%}
+                            </div>
+                            <div class="card-body dashboard-info">
+                                <div class="status-element">
+                                    {% block status_element_block %}
+                                    {% endblock %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body of Dashboard -->
+                {% block dashboard_body %}{% endblock %}
+            </div>
+        </div>
+
+        <!-- Additional embedded scripts for dashboard -->
+        <script type="text/javascript">
+        {% block script_block %}{% endblock %}
+        </script>
+        <!-- Additional Script to run -->
+        <script type="text/javascript">
+        {% block init_script %}{% endblock %}
+        </script>
+    </body>
+</html>

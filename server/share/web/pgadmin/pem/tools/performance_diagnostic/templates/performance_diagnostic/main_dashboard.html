@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block init_script %}
+
+try {
+  require(
+    ['sources/generated/performance_diagnostic', 'sources/pgadmin'],
+    function(performDiagnostic, pgAdmin) {
+      var performanceDiagnostic = window.pgAdmin.Browser.performanceDiagnostic;
+      performanceDiagnostic.load(document.getElementById('performanceDiagnostic-main-container'), {{ uniqueId }}, '{{layout|safe}}');
+    },
+    function() {
+      console.log(arguments);
+    });
+} catch (err) {
+  console.log(err);
+}
+{% endblock %}
+{% block body %}
+<style>
+    #performanceDiagnostic-main-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    #performanceDiagnostic-main-container:not(:empty) + .pg-sp-container {
+        display: none;
+    }
+</style>
+{% if is_desktop_mode and is_linux %}
+<style>
+    body
+</style>
+{% endif %}
+<div id="performanceDiagnostic-main-container" tabindex="0">
+    <div class="pg-sp-container">
+        <div class="pg-sp-content">
+            <div class="row">
+                <div class="col-12 pg-sp-icon"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block css_link %}
+{% for stylesheet in stylesheets %}
+<link type="text/css" rel="stylesheet" href="{{ stylesheet }}"/>
+{% endfor %}
+<link type="text/css" rel="stylesheet" href="{{ url_for('browser.browser_css')}}"/>
+{% endblock %}

@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+{% macro loading_element_html(unique_class, is_text_required, is_hidden) %}
+<div class="pg-sp-container {{ unique_class }} {% if is_hidden %}d-none{% endif %}">
+  <div class="pg-sp-content">
+    <div class="row">
+      <div class="col-12 pg-sp-icon"></div>
+    </div>
+    {% if is_text_required %}
+    <div class="row">
+      <div class="col-12 pg-sp-text pem-loading-text">
+          {{ gettext('Loading...') }}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% block title %}{{ gettext('Performance Diagnostics') }}{% endblock %}
+
+{% block body %}
+<!-- Override the CSS for body defined in override.css -->
+<style>
+body {
+    padding-top: 0px !important;
+}
+</style>
+<div class="container-fluid perf-dashboard-container">
+
+    <div class="pd-dashboard-header">
+        <div class="card">
+            <div class="card-header d-flex p-0">
+                <div class="pd-home" title="Performance Diagnostic">
+                    <div class="fa fa-chart-line" role="img"></div>
+                </div>
+                <div class="pd-breadcrumb d-flex">
+                    <div class="pd-header pt-1 pl-1">Performance Diagnostic</div>
+                    <div class="right-arrow"></div>
+                </div>
+                <div class="pd-breadcrumb d-flex">
+                    <div class="pd-server pt-1 pl-1">{{ serverName }}</div>
+                    <div class="right-arrow"></div>
+                </div>
+            </div>
+            <div class="card-body pt-2 pb-2">
+                <div class="status-element d-flex">
+                    <div class="d-flex my-auto mr-4">
+                        <div class="text-gray-darker d-flex my-auto pl-2 pr-2">
+                            <span class="my-auto pr-2">
+                                <i class="fa fa-calendar-alt" role="img"></i>
+                            </span> <span class="my-auto">Generated On</span>
+                        </div>
+                        <div class="d-flex my-auto">
+                            <span>{{ report_time }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-100">
+        {{ loading_element_html("perf-first-graph-loading", False, False) }}
+        <div class="perf-graph-container">
+            <div class="row">
+                <div class="col-12 top-bottom-margin-5">
+                  <form name="TotalWaitControl">
+                    <div class="d-table">
+                        <div class="d-table-row">
+                            <div class="total-wait-label d-table-cell" role="presentation">
+                                <label class="font-weight-bold pt-2 pl-1 pr-1"
+                                              for="last_time_selection">Last: </label>
+                            </div>
+                            <div class="total-wait-control d-table-cell" role="presentation">
+                                <input class="last_time_selection"
+                                             id="last_time_selection"></input>
+                            </div>
+                            <div class="total-wait-label d-table-cell" role="presentation">
+                                <label class="font-weight-bold pl-1 pt-2"
+                                              for="untilDateTotalEvents">Until: </label>
+                            </div>
+                            <div class="total-wait-control d-table-cell" role="presentation">
+                                <div class="container">
+                                    <div class="input-group date" id="fromDateTotalEvents" data-target-input="nearest">
+                                        <input id="untilDateTotalEvents" type="text" class="form-control datetimepicker-input" data-target="#fromDateTotalEvents"  placeholder="YYYY-MM-DD hh:mm:ss"/>
+                                        <div class="input-group-append" data-target="#fromDateTotalEvents" data-toggle="datetimepicker">
+                                          <div class="input-group-text"><i class="fa fa-calendar-alt" role="img"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="total-wait-td d-table-cell" role="presentation">
+                                <button class="btn btn-primary btn-block total-wait-go" id="total-wait-go" type="button">Go</button>
+                            </div>
+                        </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-12">
+                    <h6 class="col-12 text-bold p-1">{{ gettext("Total number of active sessions & wait events") }}</h6>
+                    <div class="performance-diagnostic-first-graph" tabindex="0" role="object-document" aria-label="Performance diagnostics - wait events chart">
+                        <div class="perf-first-graph-alert-container d-none">
+                            <div class="alert alert-danger alert-dismissible fade show pg-panel-message" role="alert">
+                                <strong>{{ gettext("Chart failed to load due to an error") }}</strong>
+                                <br>
+                                <strong>{{ gettext("Details: ") }}</strong>
+                                <span class="perf-first-chart-alert-message"></span>
+                            </div>
+                        </div>
+                        <canvas class="total-wait-events-graph"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="performance-diagnostic-second-graph" tabindex="0" role="object-document" aria-label="Performance diagnostics - wait event type chart">
+                        <div class="perf-second-graph-alert-container d-none">
+                            <div class="alert alert-danger alert-dismissible fade show pg-panel-message" role="alert">
+                            </div>
+                        </div>
+                        <div class="row secondary-container m-1 border">
+                            <div class="col-2">
+                                <h6 class="col-12 text-bold p-1">{{ gettext("Wait events & CPU Usage") }}</h6>
+                                <div class="col-12 mt-2">
+                                    <canvas class="selected-wait-events-pie-graph"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-10">
+                                <h6 class="col-12 text-bold p-1">{{ gettext("Number of active sessions") }}</h6>
+                                <div class="col-12">
+                                    <canvas class="second-graph-overlay"></canvas>
+                                    <canvas class="selected-wait-events-graph"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="legends-div w-100"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="dashboard-row perf-dashboard-panels">
+            <div class="perf-dashboard-tab-container">
+                <div class="row">
+                    <div class="col-12 wait_event_legend">
+                        <div class="obj_properties">
+                            <legend class="badge" id="wait_event_details">Wait Event Details</legend>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <!-- Nav tabs -->
+                        <div class="d-flex perf-div-tab-border">
+                            <div>
+                                <ul class="nav nav-tabs dashboard-tab-panel" role="tablist" aria-labelledby="wait_event_details">
+                                    <li role="presentation" class="dashboard-tab perf-dashboard-tab nav-item">
+                                        <a href="#" data-target="#tab-perf-summary-panel" aria-controls="tab-perf-summary" role="tab" data-toggle="tab" class="nav-link active summary_tab">
+                                            {{ gettext('Summary') }}
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="dashboard-tab perf-dashboard-tab nav-item">
+                                        <a href="#" data-target="#tab-perf-sample-panel" aria-controls="tab-perf-sample" role="tab" data-toggle="tab" class="nav-link sample_tab">
+                                            {{ gettext('Sample Selection') }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Tab panes -->
+                        <div>
+                            <div class="tab-content mh-450px">
+                                <div role="tabpanel" class="tab-pane active" id="tab-perf-summary-panel">
+                                    <div>
+                                        <span class="d-none time-range-selection"></span>
+                                        <div role="status" class="alert alert-info pg-panel-message summary-tab-message"></div>
+                                        {{ loading_element_html("perf-summary-loading loading_height_100_px", False, True) }}
+                                        <div class="row render-summary-area d-none pt-2">
+                                            <div class="col p-2">
+                                                <span>
+                                                    <div class="d-table-cell" role="presentation">
+                                                        <input class="render-summary-selection"
+                                                               id="render-summary-selection"></input>
+                                                    </div>
+                                                </span>
+                                            </div>
+                                            <div class="col-10 alert alert-secondary" id="perf-summary-description"></div>
+                                            <div class="col-12">
+                                                <div class="perf-top-quries-by-wait-events summary-grid d-none"></div>
+                                                <div class="perf-top-quries-by-cpu-usage summary-grid d-none"></div>
+                                                <div class="perf-top-users-by-wait-events summary-grid d-none"></div>
+                                                <div class="perf-top-users-by-cpu-usage summary-grid d-none"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div role="tabpanel" class="tab-pane" id="tab-perf-sample-panel">
+                                    <div role="status" class="alert alert-info pg-panel-message perf-tab-message"></div>
+                                    <div>
+                                        {{ loading_element_html("perf-sample-loading loading_height_100_px", False, True) }}
+
+                                        <div class="row render-sample-time-area d-none pt-2">
+                                            <div class="col-12 border-bottom p-1 mb-2">
+                                                <span>
+                                                    <div class="d-table-cell" role="presentation">
+                                                        <input class="wait_event_sample_details"
+                                                               id="wait_event_sample_details"></input>
+                                                    </div>
+                                                </span>
+                                                <span class="badge badge-pill badge-white p-2">
+                                                    <span class="render-sample-time"></span>
+                                                </span>
+                                                <span class="float-right">
+                                                    <span>
+                                                        <div class="grid-filter ml-auto">
+                                                            <form class="backgrid-filter form-search perf-grid-filter" onsubmit="return false;">
+                                                                <span class="search perf-search"></span>
+                                                                <input type="search" aria-label="Type to filter the grid data"
+                                                                                     placeholder="Type to filter" name="q">
+                                                                <a class="clear" data-backgrid-action="clear"
+                                                                                 href="#" style="display: none;">×</a>
+                                                            </form>
+                                                        </div>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="perf-sql-grid sample-grid"></div>
+                                                <div class="perf-users-grid sample-grid"></div>
+                                                <div class="perf-waits-grid sample-grid"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+var updateLineChart = function(target) {
+  var event = this;
+  var targetElement = target;
+  if(!targetElement)
+    return;
+
+  // Find table element
+  while (targetElement.nodeName !== 'TBODY') {
+      targetElement = targetElement.parentElement;
+  }
+
+  var parent = targetElement.parentElement;
+  var chartId = parseInt(parent.classList[0].split("-")[0], 10);
+  var chart = Chart.instances[chartId];
+  var index = $(target).attr('data-id');
+  var eventLabel = chart.data.datasets[index].label;
+  var unCheckedEventsList = chart.options.legend.userUncheckEvents;
+
+  // Apply filter on Chart
+  chart.legend.options.onClick.call(chart, event, chart.legend.legendItems[index]);
+
+  // Make sure we are showing correct ckeckbox attribute
+  if (chart.isDatasetVisible(index)) {
+    $(target).attr('checked', true);
+    // As event is checked then remove it from saved list
+    var idx = $.inArray(eventLabel, unCheckedEventsList);
+    if (idx !== -1) {
+      delete unCheckedEventsList[idx];
+      chart.options.legend.userUncheckEvents = unCheckedEventsList;
+    }
+  } else {
+    $(target).attr('checked', false);
+    chart.options.legend.userUncheckEvents.push(eventLabel);
+  }
+}
+</script>
+
+<div class="sql-tooltip-container"></div>
+{% endblock %}
+
+{% block init_script %}
+try {
+  require(['sources/generated/performance_diagnostic', 'sources/generated/codemirror'], function() {
+    pgAdmin.Browser.performanceDiagnostic.intializeDashboardGraphs({{ sid }}, {{trans_id}}, {{ open_window_preference }});
+  }, function() {
+    console.warn(arguments);
+  });
+} catch (err) {
+  /* Show proper error dialog */
+  if (err.stack ) { console.warn(err.stack); }
+  else { console.warn(err); }
+}
+{% endblock %}
+
+{% block require_paths %}
+    'pem.tools.performance_diagnostic.open_in_new_browser': "{{ url_for('performance_diagnostic.open_in_new_browser')[:-3] }}",
+{% endblock %}

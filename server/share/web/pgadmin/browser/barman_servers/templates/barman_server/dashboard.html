@@ -1,0 +1,150 @@
+{% macro loading_element_html(unique_class, is_text_required, is_hidden) %}
+<div class="pg-sp-container {{ unique_class }} {% if is_hidden %}d-none{% endif %}">
+  <div class="pg-sp-content">
+    <div class="row">
+      <div class="col-12 pg-sp-icon"></div>
+    </div>
+    {% if is_text_required %}
+    <div class="row">
+      <div class="col-12 pg-sp-text pem-loading-text">
+          {{ _('Loading...') }}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% set NO_DATA_FOR_GRAPH = servers|length == 0 %}
+
+<div class="container-fluid negative-space barman-server">
+    <div class="dashboard-container">
+        <div class="dashboard-body accordian-dashboard">
+            <div class="card accordian section dashboard-row">
+                <div class="card-header clearfix" data-toggle="collapse" data-target="#section-activities"
+                     aria-expanded="true">
+                    <button class="btn collapse-handle float-left negative-bg" tabindex="0" aria-label="{{ gettext("collapse/expand button") }}">
+                        <div class="caret"></div>
+                    </button>
+                    <div class="label float-left pr-2 pl-2">{{ _('Barman Server Activities') }}</div>
+                </div>
+                <div id="section-activities" class="card-body negative-bg collapse show">
+                    <div class="dashboard-row row">
+                        {% if NO_DATA_FOR_GRAPH %}
+                        <div class="barman-graph-no-data col-12 p-2"></div>
+                        {% endif %}
+                        <div class="barman-dashboard-graph col-12 mt-2 {%if NO_DATA_FOR_GRAPH %}d-none{% endif %}">
+                            <form name="barman-backup-graph-form">
+                            <table>
+                                <tr>
+                                    <td class="server-label pr-1">
+                                        <span class="pt-2 pl-1 pr-1" id="server-control-label">{{ _('Server') }}: </span>
+                                    </td>
+                                    <td class="server-control pr-2">
+                                        <select class="server-control-selection barman-options-select-width" aria-labelledby="server-control-label" disabled>
+                                            <option value="" selected="selected"></option>
+                                            {% for s in servers %}
+                                            <option value="{{ s.server }}">{{ s.server|e }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+
+                                    <td class="status-label pr-1">
+                                        <span class="pt-2 pl-1 pr-1" id="status-control-label">{{ _('Status') }}: </span>
+                                    </td>
+                                    <td class="status-control pr-2">
+                                        <select class="status-control-selection barman-options-select-width" aria-labelledby="status-control-label" disabled>
+                                          <option value="" selected="selected"></option>
+                                          {% for st in valid_backup_status %}
+                                          <option value="{{ st }}">{{ st|lower|replace("_", " ")|capitalize|e }}</option>
+                                          {% endfor %}
+                                        </select>
+                                    </td>
+
+                                    <td class="duration-label pr-1">
+                                        <span class="pt-2 pl-1 pr-1" id="duration-control-label">{{ _('Last') }}: </span>
+                                    </td>
+                                    <td class="duration-control pr-2">
+                                        <select class="duration-control-selection barman-options-select-width" aria-labelledby="duration-control-label" disabled>
+                                          <option value="1">{{ _('1 Day') }}</option>
+                                          <option value="3">{{ _('3 Days') }}</option>
+                                          <option value="7" selected="selected">{{ _('1 Week') }}</option>
+                                          <option value="14">{{ _('2 Weeks') }}</option>
+                                          <option value="21">{{ _('3 Weeks') }}</option>
+                                          <option value="28">{{ _('4 Weeks') }}</option>
+                                        </select>
+                                    </td>
+                                    <td class="until-label pr-1">
+                                        <span class="pt-2 pl-1 pr-1" id="until-control-label">{{ _('Until') }}: </span>
+                                    </td>
+                                    <td class="until-control pr-2">
+                                        <div class="input-group date" id="untilDate" data-target-input="nearest">
+                                            <input id="untilDateInput" type="text" class="form-control until-control-selection datetimepicker-input" data-target="#untilDate" aria-labelledby="until-control-label" placeholder="YYYY-MM-DD"/>
+                                            <div class="input-group-append" data-target="#untilDate" data-toggle="datetimepicker">
+                                              <div class="input-group-text"><i class="fa fa-calendar-alt" role="img"></i></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            </form>
+                        </div>
+                        <div class="col-12 chart-container">
+                            {{ loading_element_html("graph-loading", True, NO_DATA_FOR_GRAPH) }}
+                            <div class="barman-activity-graph {%if NO_DATA_FOR_GRAPH %}d-none{% endif %}" data-hide-failure="false" data-hide-success="false">
+                                <div class="barman-activity-graph-alert-container mb-4 d-none">
+                                    <div class="alert alert-danger alert-dismissible fade show pg-panel-message" role="alert">
+                                        <strong>{{ _("Chart failed to load due to an error") }}</strong>
+                                        <br>
+                                        <strong>{{ _("Details: ") }}</strong>
+                                        <span class="barman-activity-graph-alert-message"></span>
+                                    </div>
+                                </div>
+                                <canvas class="barman-activity-graph-canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card accordian section dashboard-row">
+                <div class="card-header clearfix" data-toggle="collapse" data-target="#section-managed-servers"
+                     aria-expanded="true">
+                    <button class="btn collapse-handle float-left negative-bg" tabindex="0" aria-label="{{ gettext("collapse/expand button") }}">
+                        <div class="caret"></div>
+                    </button>
+                    <div class="label float-left pr-2 pl-2">{{ _('Servers') }}</div>
+                </div>
+                <div id="section-managed-servers" class="card-body negative-bg collapse show">
+                    <div class="dashboard-row row">
+                        <div class="chart-container barman-manage-server-grid-container col-12">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card accordian section dashboard-row">
+                    <div class="card-header clearfix" data-toggle="collapse" data-target="#section-server-backups"
+                         aria-expanded="true">
+                        <button class="btn collapse-handle float-left negative-bg" tabindex="0" aria-label="{{ gettext("collapse/expand button") }}">
+                            <div class="caret"></div>
+                        </button>
+                        <div class="label float-left pr-2 pl-2">{{ _('Backups') }}</div>
+                    </div>
+                    <div id="section-server-backups" class="card-body negative-bg collapse show">
+                        <div class="dashboard-row row">
+                            <div class="chart-container barman-server-backups-container col-12">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+  // Initiate Barman server dashboard
+  pgAdmin.Dashboard.barman_server.initBarmanDashboardRendering({{ bsid }});
+</script>

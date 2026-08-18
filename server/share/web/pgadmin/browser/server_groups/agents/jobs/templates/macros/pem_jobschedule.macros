@@ -1,0 +1,147 @@
+{#################################################}
+{# This will be specific macro for pem.schedule. #}
+{#################################################}
+{% import 'macros/pem_jobschedule_exception.macros' as EXCEPTIONS %}
+{% macro JOIN_BOOL_ARRAY(arr) %}
+ARRAY[{{ arr|join(', ')}}]::boolean[]
+{%- endmacro %}
+
+{% macro UPSERT(jid, data) -%}
+-- Inserting a schedule{% if jid %} (jobid: {{ jid|qtLiteral(conn) }}){% endif %}
+
+INSERT INTO pem.schedule(
+    jscjobid, jscname, jscdesc, jscenabled,
+    jscstart, {% if data.jscend %}jscend,{% endif %}
+    jscminutes, jschours, jscweekdays, jscmonthdays, jscmonths, jsctimezone
+) VALUES (
+    {% if jid %}{{ jid|qtLiteral(conn) }}{% else %}jid{% endif %}, {{ data.jscname|qtLiteral(conn, True) }}::text, {{ data.jscdesc|qtLiteral(conn, True) }}::text, {% if data.jscenabled %}true{% else %}false{% endif %},
+    {{ data.jscstart|qtLiteral(conn, True) }}::timestamp with time zone, {% if data.jscend %}{{ data.jscend|qtLiteral(conn, True) }}::timestamp with time zone,{% endif %}
+
+    -- Minutes
+    {{ JOIN_BOOL_ARRAY(data.jscminutes) }},
+    -- Hours
+    {{ JOIN_BOOL_ARRAY(data.jschours) }},
+    -- Week days
+    {{ JOIN_BOOL_ARRAY(data.jscweekdays) }},
+    -- Month days
+    {{ JOIN_BOOL_ARRAY(data.jscmonthdays) }},
+    -- Months
+    {{ JOIN_BOOL_ARRAY(data.jscmonths) }},
+    -- timezone
+    {{ data.jsctimezone|qtLiteral(conn, True) }}::text
+) RETURNING jscid;
+{%- endmacro %}
+
+{% macro INSERT(jid, data) -%}
+-- Inserting a schedule{% if jid %} (jobid: {{ jid|qtLiteral(conn) }}){% endif %}
+
+INSERT INTO pem.schedule(
+    jscjobid, jscname, jscdesc, jscenabled,
+    jscstart, {% if data.jscend %}jscend,{% endif %}
+    jscminutes, jschours, jscweekdays, jscmonthdays, jscmonths, jsctimezone
+) VALUES (
+    {% if jid %}{{ jid|qtLiteral(conn) }}{% else %}jid{% endif %}, {{ data.jscname|qtLiteral(conn, True) }}::text, {{ data.jscdesc|qtLiteral(conn, True) }}::text, {% if data.jscenabled %}true{% else %}false{% endif %},
+    {{ data.jscstart|qtLiteral(conn, True) }}::timestamp with time zone, {% if data.jscend %}{{ data.jscend|qtLiteral(conn, True) }}::timestamp with time zone,{% endif %}
+
+    -- Minutes
+    {{ JOIN_BOOL_ARRAY(data.jscminutes) }},
+    -- Hours
+    {{ JOIN_BOOL_ARRAY(data.jschours) }},
+    -- Week days
+    {{ JOIN_BOOL_ARRAY(data.jscweekdays) }},
+    -- Month days
+    {{ JOIN_BOOL_ARRAY(data.jscmonthdays) }},
+    -- Months
+    {{ JOIN_BOOL_ARRAY(data.jscmonths) }},
+    -- timezone
+    {{ data.jsctimezone|qtLiteral(conn, True) }}::text
+) RETURNING jscid INTO scid;{% if 'jscexceptions' in data %}
+{% for exc in data.jscexceptions %}
+
+
+{{ EXCEPTIONS.INSERT(None, exc) }}{% endfor %}{% endif %}
+{%- endmacro %}
+{% macro UPDATE(jid, jscid, data) -%}
+{% if 'jscname' in data or 'jscenabled' in data or 'jscdesc' in data or 'jscstart' in data or 'jscend' in data or 'jscmonths' in data or 'jscminutes' in data or 'jscmonthdays' in data or 'jschours' in data or 'jscweekdays' in data or 'jsctimezone' in data %}
+
+-- Updating the schedule (id: {{ jscid|qtLiteral(conn) }}, jobid: {{ jid|qtLiteral(conn) }})
+UPDATE pem.schedule
+SET{% if 'jscname' in data %}
+
+    jscname={{ data.jscname|qtLiteral(conn, True) }}::text{% if 'jscdesc' in data or 'jscstart' in data or 'jscend' in data or 'jscmonths' in data or 'jscminutes' in data or 'jscmonthdays' in data or 'jschours' in data or 'jscweekdays' in data or 'jscenabled' in data %},{% endif %}{% endif %}{% if 'jscenabled' in data %}
+
+    jscenabled={% if data.jscenabled %}true{% else %}false{% endif %}{% if 'jscdesc' in data or 'jscstart' in data or 'jscend' in data or 'jscmonths' in data or 'jscminutes' in data or 'jscmonthdays' in data or 'jschours' in data or 'jscweekdays' in data %},{% endif %}{% endif %}{% if 'jscdesc' in data %}
+
+    jscdesc={% if data.jscdesc %}{{ data.jscdesc|qtLiteral(conn, True) }}::text{% else %}''::text{% endif %}{% if 'jscstart' in data or 'jscend' in data or 'jscmonths' in data or 'jscminutes' in data or 'jscmonthdays' in data or 'jschours' in data or 'jscweekdays' in data %},{% endif %}{% endif %}{% if 'jscstart' in data %}
+
+    jscstart={{ data.jscstart|qtLiteral(conn, True) }}::timestamptz{% if 'jscend' in data or 'jscmonths' in data or 'jscminutes' in data or 'jscmonthdays' in data or 'jschours' in data or 'jscweekdays' in data %},{% endif %}{% endif %}{% if 'jscend' in data %}
+
+    jscend={% if data.jscend %}{{ data.jscend|qtLiteral(conn, True) }}::timestamptz{% else %}NULL::timestamptz{% endif %}{% if 'jscmonths' in data or 'jscminutes' in data or 'jscmonthdays' in data or 'jschours' in data or 'jscweekdays' in data %},{% endif %}{% endif %}{% if 'jscmonths' in data %}
+
+    jscmonths={{ JOIN_BOOL_ARRAY(data.jscmonths) }}{% if 'jscminutes' in data or 'jscmonthdays' in data or 'jschours' in data or 'jscweekdays' in data %},{% endif %}{% endif %}{% if 'jscminutes' in data %}
+
+    jscminutes={{ JOIN_BOOL_ARRAY(data.jscminutes) }}{% if 'jscmonthdays' in data or 'jschours' in data or 'jscweekdays' in data %},{% endif %}{% endif %}{% if 'jscmonthdays' in data %}
+
+    jscmonthdays={{ JOIN_BOOL_ARRAY(data.jscmonthdays) }}{% if 'jschours' in data or 'jscweekdays' in data %},{% endif %}{% endif %}{% if 'jschours' in data %}
+
+    jschours={{ JOIN_BOOL_ARRAY(data.jschours) }}{% if 'jscweekdays' in data %},{% endif %}{% endif %}{% if 'jscweekdays' in data %}
+
+    jscweekdays={{ JOIN_BOOL_ARRAY(data.jscweekdays) }}{% endif %}{% if 'jsctimezone' in data %}
+    {% if 'jscname' in data or 'jscenabled' in data or 'jscdesc' in data or 'jscstart' in data
+          or 'jscend' in data or 'jscmonths' in data or 'jscminutes' in data or 'jscmonthdays' in data
+          or 'jschours' in data or 'jscweekdays' in data %}
+    ,{% endif %}
+    jsctimezone={{ data.jsctimezone|qtLiteral(conn, True) }}::text
+{% endif %}
+
+WHERE jscid={{ jscid|qtLiteral(conn) }}::integer AND jscjobid={{ jid|qtLiteral(conn) }}::integer;{% endif %}{% if 'jscexceptions' in data %}
+{% if 'added' in data.jscexceptions and data.jscexceptions.added|length > 0 %}
+
+{% for exc in data.jscexceptions.added %}
+{{ EXCEPTIONS.INSERT(jscid, exc) }}
+{% endfor %}
+{% endif %}
+{% if 'deleted' in data.jscexceptions and data.jscexceptions.deleted|length > 0 %}
+
+{% for exc in data.jscexceptions.deleted %}
+{{ EXCEPTIONS.DELETE(jscid, exc) }}
+{% endfor %}
+{% endif %}
+{% if 'changed' in data.jscexceptions and data.jscexceptions.changed|length > 0 %}
+
+{% for exc in data.jscexceptions.changed %}
+{{ EXCEPTIONS.UPDATE(jscid, exc) }}
+{% endfor %}
+{% endif %}
+{% endif %}
+{%- endmacro %}
+{% macro DELETE(jid, jscid) -%}
+-- Removing the existing schedule (id: {{ jscid|qtLiteral(conn) }}, jobid: {{ jid|qtLiteral(conn) }})
+DELETE FROM pem.schedule WHERE jscid={{ jscid|qtLiteral(conn) }}::integer AND jscjobid={{ jid|qtLiteral(conn) }}::integer;
+{%- endmacro %}
+{% macro FETCH_CURRENT() -%}
+SELECT jscid FROM pem.schedule WHERE xmin::text = (txid_current() % (2^32)::bigint)::text;
+{%- endmacro %}
+{% macro PROPERTIES(jid, jscid) -%}
+SELECT
+    jscid,  jscjobid, jscname, jscdesc, jscenabled, jscstart, jscend,
+    jscminutes, jschours, jscweekdays, jscmonthdays, jscmonths, jsctimezone,
+    jexid, jexdate, jextime
+FROM
+    pem.schedule s
+    LEFT JOIN (
+        SELECT
+            jexscid, array_agg(jexid) AS jexid, array_agg(to_char(jexdate, 'YYYY-MM-DD')) AS jexdate,
+            array_agg(jextime) AS jextime
+        FROM
+            pem.exception ex
+        GROUP BY
+            jexscid
+    ) e ON s.jscid = e.jexscid
+WHERE
+{% if jscid %}
+   s.jscid = {{ jscid|qtLiteral(conn) }}::integer AND
+{% endif %}
+   s.jscjobid = {{ jid|qtLiteral(conn) }}::integer
+ORDER BY jscname;
+{%- endmacro %}

@@ -1,0 +1,94 @@
+{% import 'macros/dashboard_report_status_info.macro' as INFO %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+        <title>{% block title %}{% endblock %}</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- To set pgAdmin4 shortcut icon in browser -->
+        <link rel="shortcut icon" href="{{ url_for('redirects.favicon') }}"/>
+
+        <!-- Specified stylesheet links -->
+        {% block css_block %}{% endblock %}
+
+        <!-- Specified JS links -->
+        {% block js_block %}{% endblock %}
+    </head>
+    <body class="dashboard">
+        <!--[if lt IE 7]>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+            your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <!-- Common for all the dashboard -->
+        <div class="container-fluid negative-space">
+            <div class="dashboard-container">
+
+                <!-- Header for Dashboard -->
+                <div class="row mb-2 dashboard-header dashboard-header">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex dashboard-breadcrumb-container">
+                                <div class="dashboard-home"></div>
+                                <div class="dashboard-breadcrumb d-flex flex-wrap"></div>
+                                <span class="position-absolute p-1" style="right: 0;">
+                                   <a class="btn btn-settings disabled" tabindex="-1" href="#" title="{{ gettext("Dashboard does not have 2 or more line charts") }}">
+                                     <span class="fa fa-cog"></span>
+                                   </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card dashboard-info-card">
+                            <div class="card-body dashboard-info">
+                                <ul class="status-info pull-left p-2 pr-5">
+                                    {{ INFO.element(
+                                      'fa fa-laptop ', gettext("Object Type"),
+                                       'object_type', '', 'dashboard-type'
+                                    ) }}
+                                    {{ INFO.element_with_placeholder(
+                                      'fa fa-heartbeat', gettext("Status"),
+                                      'status', 'status_since_placeholder',
+                                      gettext("Since"), ':', 'status_since', 'dashboard-status'
+                                    ) }}
+                                    {{ INFO.element(
+                                      'fa far fa-calendar-alt', gettext("Generated On"),
+                                      'generated_on', 'dashboard-time'
+                                    ) }}
+                                    {{ INFO.element_with_placeholder(
+                                      'fa fa-bell', gettext("No. of alerts"),
+                                      'no_alerts',
+                                      'alert_acknowledge_placeholder',
+                                      gettext("Acknowledged"), ':',
+                                      'alert_acknowledge', 'dashboard-alert-status'
+                                    ) }}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body of Dashboard -->
+                {% block dashboard_body_info %}{% endblock %}
+                {% block dashboard_body %}{% endblock %}
+            </div>
+        </div>
+
+        <!-- Additional embedded scripts for dashboard -->
+        {% block script_block %}{% endblock %}
+
+        <!-- Additional Script to run -->
+        <script>
+        {% block init_script %}{% endblock %}
+        </script>
+    </body>
+</html>

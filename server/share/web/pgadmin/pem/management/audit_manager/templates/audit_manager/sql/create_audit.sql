@@ -1,0 +1,32 @@
+INSERT INTO pem.audit_configuration(
+    server_id,
+    edb_audit,
+    edb_audit_directory,
+    edb_audit_filename,
+    edb_audit_rotation_day,
+    edb_audit_rotation_size,
+    edb_audit_rotation_sec,
+    edb_audit_connect,
+    edb_audit_disconnect,
+    edb_audit_statements,
+    log_collection,
+    log_collection_frequency,
+    edb_audit_tag,
+    edb_audit_destination
+)
+VALUES
+    ((%s)::int,
+      (%s)::text,
+      (%s)::text,
+      (%s)::text,
+      (%s)::text,
+      (%s)::int,
+      (%s)::int,
+      (%s)::text,
+      (%s)::text,
+      (%s)::text,
+      (%s)::boolean,
+      (%s)::text,
+      (%s)::text,
+      (%s)::text
+);

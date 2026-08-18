@@ -1,0 +1,124 @@
+{% extends "html/report_base.html" %}
+{% import 'macros/report_title.macro' as TITLE %}
+{% block title %} {{ gettext("Tuning Wizard Report") }} {% endblock %}
+{% block report_header_text %}
+    {{ TITLE.TitleElement("Tuning Wizard Report") }}
+{%endblock%}
+
+{% block loading_text %}
+{%endblock%}
+
+{% block status_element_block %}
+    <ul class="pull-left p-2">
+    {{ INFO.element(
+      'pem-dashboard-icon icon-date_time',
+      gettext("Generated On:"), 'report_generated', report_time
+    ) }}
+    </ul>
+
+    <span class="pull-right d-flex p-1">
+        <span class="d-flex my-auto mr-2">
+            <span class="my-auto">{{ _('Go to: ') }}</span>
+        </span>
+        <span>
+            <select id="menu" class="select-font-size form-control">
+                {% for s in servers %}
+                    {% if servers[s].has_changed %}
+                        <option value="{{servers[s].description}}">{{servers[s].description}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </span>
+    </span>
+{% endblock %}
+
+{% block css_block %}
+  {# Embed files #}
+    {% for css_file in css_files %}
+      {{ css_file|safe }}
+    {% endfor %}
+{% endblock %}
+
+{% block dashboard_body %}
+
+<div class="row mb-2">
+    <div class="col-12">
+        <div class="dashboard-body">
+            <div class="card mb-2">
+                <div class="card-header d-flex">
+                    <div class="label mr-auto pl-2 pr-2">{{ _('Summary') }}</div>
+                </div>
+                <div class="card-body dashboard-info">
+                    <div class="status-element d-flex">
+                        {{ INFO.element(
+                          'fa fa-server',
+                          gettext("Number of servers selected: "),
+                          'report_server_count', total_servers
+                        ) }}
+                        {{ INFO.element(
+                          'pem-dashboard-icon icon-machine_utilization',
+                          gettext("Machine utilization: "),
+                          'machine_utilization', tuning_config.usage
+                        ) }}
+                        {{ INFO.element(
+                          'pem-dashboard-icon icon-workload_profile',
+                          gettext("Workload profile: "),
+                          'workload_profile', tuning_config.workload
+                        ) }}
+                    </div>
+                </div>
+            </div>
+
+            {% for s in servers %}
+                {% if servers[s].has_changed %}
+                    <div class="card accordian section">
+                        <div class="card-header clearfix" data-toggle="collapse" data-target="#section-{{loop.index}}" aria-expanded="true">
+                            <div class="btn collapse-handle float-left negative-bg" tabindex="0" aria-label="{{ gettext("collapse/expand button") }}">
+                                <div class="caret"></div>
+                            </div>
+                            <div id="Server-{{loop.index}}" class="label float-left pr-2 pl-2">Server: {{servers[s].label}}</div>
+                        </div>
+                        <div id="section-{{loop.index}}" class="card-body negative-bg collapse show" style="">
+                            <div class="dashboard-row row">
+                                <div class="chart-container col-12 table-container" tabindex="0">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <table class="table presentation table-bordered table-border-radius table-hover table-noouter-border">
+                                            <caption class="d-none">Table report for tuning changes</caption>
+                                                <thead>
+                                                <tr>
+                                                    <th role="columnheader" class="no-sort" scope="col">{{ _('GUC Parameter') }}</th>
+                                                    <th role="columnheader" class="no-sort" scope="col">{{ _('Original Value') }}</th>
+                                                    <th role="columnheader" class="no-sort" scope="col">{{ _('Recommended Value') }}</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for t in tuning_changes %}
+                                                    {% set exploop = loop %}
+                                                    {% if t.server_id == servers[s].server_id and 'param' in t %}
+                                                            <td class="pem-chart-td">{{t.param}}</td>
+                                                            <td class="pem-chart-td">{{t.orig_value}}</td>
+                                                            <td class="pem-chart-td">{{t.rec_value}}</td>
+                                                         </tr>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script_block %}
+    {% for js_file in js_files %}
+      {{ js_file|safe }}
+    {% endfor %}
+{% endblock %}

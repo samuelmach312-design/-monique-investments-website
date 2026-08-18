@@ -1,0 +1,166 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "{{ company_short_name }} Postgres Enterprise Manager REST APIs",
+    "description": "**{{ company_short_name }} Postgres Enterprise Manager** uses a token-based authentication mechanism to allow access to exposed REST APIs.\n\nPEM uses tokens for authentication purposes. To generate a token, please refer the section <a href=\"#operations,post-/token/,Token\">Token</a>. After receiving a token string, you should include the token string in the 'X-Auth-Token' header when calling any resources except https://PEM-SERVER-IP/api/token/.\n\n\n**NOTE:**\n* **{{ company_short_name }} Postgres Enterprise Manager** *is referred as* **PEM** *in this documentation.*\n* **PEM** *uses self-certified SSL certificates, so you may encounter errors such as 'SSL certificate problem: self signed certificate'. You may need to use an 'insecure' connection to connect to the server.\n\n\n**Rest api versions:**{% for api_version in api_versions %}{% for k, v in api_version.items()%}\n* <a href='{{v}}'>{{k}}</a> {% endfor %}{% endfor %} (Current)\n\n",
+    "contact": {
+      "name": "{{ company_long_name }}",
+      "url": "{{ company_website }}",
+      "email": "{{ company_contact_email }}"
+    },
+    "license": {
+      "name": "Limited Use Software License Agreement",
+      "url": "{{ company_website }}/ba/limited-license-v2-9"
+    }
+  },
+  "servers": [
+    {
+      "url": "{{ base_url }}/api"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Token",
+      "description": "A string generated and used by PEM REST APIs for authentication purposes"
+    }
+  ],
+  "paths": {
+    "/token/": {
+      "post": {
+        "tags": [
+          "Token"
+        ],
+        "summary": "Generate a token for authentication.",
+        "description": "This URL creates a token to be used by the other REST APIs exposed by PEM.\nYou must provide a valid username and password, which will be validated during the process.\n\nThe token will be valid for 20 mins.",
+        "operationId": "TokenGeneration",
+        "requestBody": {
+          "description": "Creates the token using the /token/ URL first.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "password",
+                  "username"
+                ],
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Validates username, which has pem_user role."
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password for the username"
+                  }
+                },
+                "description": "Creates the token using the /token/ URL."
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Token was created and can be found as 'X-Subject-Token' in the response header.",
+            "headers": {
+              "X-Subject-Token": {
+                "description": "Returns the new token, which can be used with REST APIs for further operations",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "issuedAt": {
+                      "type": "string",
+                      "description": "Token was generated at this time.",
+                      "format": "date-time"
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "description": "Provides date and time when the token expires.",
+                      "format": "date-time"
+                    },
+                    "schema_version": {
+                      "type": "integer",
+                      "description": "Application-supported schema version"
+                    },
+                    "backend_schema_version": {
+                      "type": "integer",
+                      "description": "Backend database schema version"
+                    },
+                    "version_long": {
+                      "type": "integer",
+                      "description": "Version represented in long format"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "String reprentation of the PEM version"
+                    },
+                    "supported_api_versions": {
+                      "type": "array",
+                      "description": "List of supported API versions",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "deprecated_api_versions": {
+                      "type": "array",
+                      "description": "List of deprecated API versions",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "description": "Contains information related to when the token was generated and when it expired."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The given information is not valid.",
+            "content": {}
+          },
+          "500": {
+            "description": "Something went wrong.",
+            "content": {}
+          },
+          "503": {
+            "description": "PEM backend database server is down. Service is not available now.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "delete": {
+        "tags": [
+          "Token"
+        ],
+        "summary": "Release the token.",
+        "description": "Invalidates the token.\nIt will no longer be available for further operations.",
+        "parameters": [
+          {
+            "name": "X-Auth-Token",
+            "in": "header",
+            "description": "Token of authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully released the token from PEM.\nThis token can not be used for any further operations.",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {}
+}

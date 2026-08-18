@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block init_script %}
+require(['sources/generated/browser_nodes'], function() {
+
+    require(['sources/generated/profiler'], function() {
+      var profiler = window.pgAdmin.Tools.SqlProfiler;
+      profiler.load(document.getElementById('profiler-container'), {{sid}}, '{{trace_id}}', {{trans_id}});
+    }, function() {
+      /* TODO:: Show proper error dialog */
+      console.warn(arguments);
+    });
+
+});
+{% endblock %}
+{% block css_link %}
+<style>
+  #profiler-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    #profiler-container:not(:empty) + .pg-sp-container {
+        display: none;
+    }
+</style>
+<link type="text/css" rel="stylesheet" href="{{ url_for('browser.browser_css')}}"/>
+{% endblock %}
+{% block title %}{{title}}{% endblock %}
+{% block body %}
+<div id="profiler-container" tabindex="0">
+  <div class="pg-sp-container">
+    <div class="pg-sp-content">
+        <div class="row">
+            <div class="col-12 pg-sp-icon"></div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+.icon-coll-agent {
+  background-image: url('{{ url_for('NODE-agent.static', filename='img/coll-agent.svg') }}') !important;
+  background-repeat: no-repeat;
+  background-size: 20px !important;
+  align-content: center;
+  vertical-align: middle;
+  height: 1.3em;
+}
+
+.icon-agent {
+  background-image: url('{{ url_for('NODE-agent.static', filename='img/agent.svg') }}') !important;
+  background-repeat: no-repeat;
+  background-size: 20px !important;
+  align-content: center;
+  vertical-align: middle;
+  height: 1.3em;
+}

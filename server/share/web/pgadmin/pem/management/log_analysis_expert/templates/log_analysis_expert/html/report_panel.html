@@ -1,0 +1,74 @@
+{% extends "html/report_base.html" %}
+{% import 'macros/dashboard_report_status_info.macro' as INFO %}
+{% import 'macros/report_title.macro' as TITLE %}
+{% block title %} {{ gettext("Postgres Log Analysis Expert") }} {% endblock %}
+
+{% block report_header_text %}
+    {{ TITLE.TitleElement(gettext("Postgres Log Analysis Expert")) }}
+{%endblock%}
+
+{% block loading_text %}
+    {{ gettext("Analyzing logs for creating the report.") }}
+    <br>
+    {{ gettext("It will be loaded on completion.") }}
+{%endblock%}
+
+{% block status_element_block %}
+<ul class="status-info pull-left p-2">
+    {{ INFO.element('pem-report-icon icon-interval',
+        gettext("Interval:"), 'report_interval', params['interval_str']) }}
+    {{ INFO.element('pem-report-icon icon-date_time',
+        gettext("Generated:"), 'report_generated', report_time ) }}
+    {{ INFO.element('pem-report-icon icon-span',
+        gettext("Span:"), 'report_span', params['span']) }}
+    {{ INFO.element('pem-report-icon icon-aggreate',
+        gettext("Aggregate:"), 'report_aggregate', params['aggregate_method']) }}
+</ul>
+<span class="pull-right p-1 d-flex" style="right: 0;">
+    <span class="my-auto mr-2">
+        <span class="my-auto">{{ _('Go to: ') }}</span>
+    </span>
+    <span>
+        <select id="menu" onchange="jumpToServer(this);" class="select-font-size form-control">
+            {% for server in servers %}
+            <option value="{{ server.id }}" {% if loop.index == 1 %}selected{% endif %}>{{ server.name|safe|e }}</option>
+            {% endfor %}
+        </select>
+    </span>
+</span>
+{% endblock %}
+
+{% block script_block %}
+function jumpToServer(select) {
+  let serverName = select.value;
+  var labels = document.querySelectorAll("div.label");
+  for (var i=0; i<labels.length; i++) {
+    var text = labels[i].textContent;
+    if (text && text.indexOf(serverName) != -1) {
+      // Will give data-target of card we can use that to jump on the section
+      var section = labels[i].parentElement.dataset.target;
+      window.location.hash = section
+      break;
+    }
+  }
+}
+{% endblock %}
+
+{% block css_block %}{{ css_content|safe }}{% endblock %}
+{% block init_script %}
+window.messages = {
+    'summary': {{ gettext('Summary')|safe|tojson }},
+    'timeline': {{ gettext('Timeline')|safe|tojson }},
+};
+
+{{ js_content|safe }}
+{% endblock %}
+
+{% block dashboard_body %}
+  <div id="logexpert_report_area"
+       data-download="{{ is_download }}"
+       data-transId="{{ trans_id }}"
+       data-url="{{ url_for('log_analysis_expert.index') }}report/{{ trans_id }}/poll">
+  </div>
+  <div id="charts-data" data-charts="{{ chart_data }}"></div>
+{% endblock %}

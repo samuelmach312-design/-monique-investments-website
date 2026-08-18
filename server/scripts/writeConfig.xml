@@ -1,0 +1,167 @@
+<actionDefinition name="setConfigVar">
+
+  <parameterList>
+    <stringParameter  name="configFile" allowEmptyValue="0"/>
+    <stringParameter  name="variable" allowEmptyValue="0"/>
+    <stringParameter  name="value" allowEmptyValue="0"/>
+    <booleanParameter name="quoteAround"/>
+    <booleanParameter name="abortOnError"/>
+    <booleanParameter name="showMessageOnError"/>
+    <stringParameter  name="customErrorMessage" value=""/>
+    <stringParameter  name="progressText" value=""/>
+  </parameterList>
+
+  <actionList>
+
+    <setInstallerVariable name="nl" value="&#10;"/>
+    <setInstallerVariable name="nl" value="&#13;${nl}">
+      <ruleList>
+        <compareText logic="equals" text="${platform_name}" value="windows"/>
+      </ruleList>
+    </setInstallerVariable>
+
+    <setInstallerVariable name="customErrorMessage"
+      value="${msg(error.setting.variable.in.config.file)}">
+      <ruleList>
+        <compareText text="${customErrorMessage}" value=""
+          logic="equals"/>
+      </ruleList>
+    </setInstallerVariable>
+
+    <setInstallerVariable name="progressText"
+      value="${msg(progress.setting.variable.in.config.file)}">
+      <ruleList>
+        <compareText text="${progressText}" value=""
+          logic="equals"/>
+      </ruleList>
+    </setInstallerVariable>
+
+    <readFile name="configuration" path="${configFile}"
+      abortOnError="${abortOnError}"
+      showMessageOnError="${showMessageOnError}"
+      customErrorMessage="${customErrorMessage}"
+      progressText="${progressText}"/>
+
+    <setInstallerVariable name="succeed" value="false"/>
+
+    <actionGroup>
+      <actionList>
+        <setInstallerVariableFromRegEx name="configuration"
+          text="${configuration}"
+          pattern="(.*\n)\s*${variable}\s*=\s*'[\w\.-_]*'(.*)"
+          substitution="\1${variable} = '${value}'\2"
+          abortOnError="${abortOnError}"
+          showMessageOnError="${showMessageOnError}"
+          customErrorMessage="${customErrorMessage}"
+          progressText="${progressText}"/>
+
+        <setInstallerVariable name="succeed" value="true"/>
+
+      </actionList>
+      <ruleList>
+        <regExMatch logic="matches"
+          pattern=".*\n\s*${variable}\s*=\s*'[\w\.-_]*'.*"
+          text="${configuration}"/>
+        <isTrue value="${quoteAround}"/>
+      </ruleList>
+    </actionGroup>
+
+    <actionGroup>
+      <actionList>
+        <setInstallerVariableFromRegEx name="configuration"
+          text="${configuration}"
+          pattern="(.*\n)\s*${variable}\s*=\s*[\w\.-_]*(.*)"
+          substitution="\1${variable} = ${value}\2"
+          abortOnError="${abortOnError}"
+          showMessageOnError="${showMessageOnError}"
+          customErrorMessage="${customErrorMessage}"
+          progressText="${progressText}"/>
+
+        <setInstallerVariable name="succeed" value="true"/>
+      </actionList>
+      <ruleList>
+        <regExMatch logic="matches"
+          pattern=".*\n\s*${variable}\s*=\s*[\w\.-_]*.*"
+          text="${configuration}"/>
+        <isFalse value="${quoteAround}"/>
+        <isFalse value="${succeed}"/>
+      </ruleList>
+    </actionGroup>
+
+    <actionGroup>
+      <ruleList>
+        <isFalse value="${succeed}"/>
+        <regExMatch logic="matches"
+          pattern=".*\n\s*#\s*${variable}\s*=\s*'[\w\.-_]*'.*"
+          text="${configuration}"/>
+        <isTrue value="${quoteAround}"/>
+      </ruleList>
+      <actionList>
+        <setInstallerVariableFromRegEx name="configuration"
+          text="${configuration}"
+          pattern="(.*\n\s*#\s*${variable}\s*=\s*'[\w\.-_]*')(.*)"
+          substitution="\1${nl}${variable} = '${value}'\2"
+          abortOnError="${abortOnError}"
+          showMessageOnError="${showMessageOnError}"
+          customErrorMessage="${customErrorMessage}"
+          progressText="${progressText}"/>
+
+        <setInstallerVariable name="succeed" value="true"/>
+      </actionList>
+    </actionGroup>
+
+    <actionGroup>
+      <ruleList>
+        <isFalse value="${succeed}"/>
+        <regExMatch logic="matches"
+          pattern=".*\n\s*#\s*${variable}\s*=\s*[\w\.-_]+.*"
+          text="${configuration}"/>
+        <isFalse value="${quoteAround}"/>
+      </ruleList>
+      <actionList>
+        <setInstallerVariableFromRegEx name="configuration"
+          text="${configuration}"
+          pattern="(.*\n\s*#\s*${variable}\s*=\s*[\w\.-_]+)(.*)"
+          substitution="\1${nl}${variable} = ${value}\2"
+          abortOnError="${abortOnError}"
+          showMessageOnError="${showMessageOnError}"
+          customErrorMessage="${customErrorMessage}"
+          progressText="${progressText}"/>
+
+        <setInstallerVariable name="succeed" value="true"/>
+      </actionList>
+    </actionGroup>
+
+    <actionGroup>
+      <ruleList>
+        <isFalse value="${succeed}"/>
+      </ruleList>
+
+      <actionList>
+        <setInstallerVariable name="configuration"
+          value="${configuration}${nl}${variable} = ${value}">
+          <ruleList>
+            <isFalse value="${quoteAround}"/>
+          </ruleList>
+        </setInstallerVariable>
+
+        <setInstallerVariable name="configuration"
+          value="${configuration}${nl}${variable} = '${value}'">
+          <ruleList>
+            <isTrue value="${quoteAround}"/>
+          </ruleList>
+        </setInstallerVariable>
+
+        <setInstallerVariable name="succeed" value="true"/>
+      </actionList>
+    </actionGroup>
+
+    <writeFile path="${configFile}" text="${configuration}"
+      abortOnError="${abortOnError}"
+      showMessageOnError="${showMessageOnError}"
+      customErrorMessage="${customErrorMessage}"
+      progressText="${progressText}"/>
+
+  </actionList>
+</actionDefinition>
+

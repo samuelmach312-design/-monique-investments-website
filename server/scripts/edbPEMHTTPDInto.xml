@@ -1,0 +1,208 @@
+<actionDefinition name="edbPEMHTTPDInto">
+
+  <parameterList>
+    <stringParameter name="installed" allowEmptyValue="0"/>
+    <stringParameter name="version" allowEmptyValue="0"/>
+    <stringParameter name="installdir" allowEmptyValue="0"/>
+    <stringParameter name="apachePath" allowEmptyValue="0"/>
+    <stringParameter name="pythonPath" allowEmptyValue="0"/>
+    <stringParameter name="port" allowEmptyValue="0"/>
+    <stringParameter name="pythonVersion" allowEmptyValue="1"/>
+    <stringParameter name="languagepackVersion" allowEmptyValue="1"/>
+  </parameterList>
+
+  <actionList>
+    <logMessage
+      text="--------------------------------------------------------------------------------------"/>
+    <logMessage
+      text="=> Gathering the information about the PEM-HTTPD and LanguagePack module installation."/>
+    <globalVariables names="${installed} ${version} ${installdir} ${apachePath} ${pythonPath} ${port} ${pythonVersion} ${languagepackVersion}"/>
+    <setInstallerVariable name="eap_ld_library_path_env" value=""/>
+    <setInstallerVariable name="${installed}" value="false" persist="1"/>
+    <setInstallerVariable name="${version}" value="" persist="1"/>
+    <setInstallerVariable name="${installdir}" value="" persist="1"/>
+    <setInstallerVariable name="${apachePath}" value="" persist="1"/>
+    <setInstallerVariable name="${pythonPath}" value="" persist="1"/>
+    <setInstallerVariable name="${port}" value="" persist="1"/>
+    <setInstallerVariable name="${pythonVersion}" value="" persist="1">
+      <ruleList>
+        <compareText text="${pythonVersion}" logic="does_not_equal" value=""/>
+      </ruleList>
+    </setInstallerVariable>
+    <setInstallerVariable name="${languagepackVersion}" value="" persist="1">
+      <ruleList>
+        <compareText text="${languagepackVersion}" logic="does_not_equal" value=""/>
+      </ruleList>
+    </setInstallerVariable>
+
+    <setInstallerVariable name="eap_tmp_var" value=""/>
+    <registryGet wowMode="64" name="Version" variable="eap_tmp_var"
+      key="HKEY_LOCAL_MACHINE\SOFTWARE\EnterpriseDB\PEM-HTTPD">
+      <ruleList>
+        <compareText text="${platform_name}" logic="equals" value="windows"/>
+      </ruleList>
+    </registryGet>
+
+    <actionGroup>
+      <actionList>
+        <touchFile path="/etc/postgres-reg.ini"/>
+        <iniFileGet file="/etc/postgres-reg.ini" variable="eap_tmp_var"
+          section="PEM-HTTPD" key="Version"/>
+      </actionList>
+      <ruleList>
+        <compareText text="${platform_name}" logic="does_not_equal" value="windows"/>
+      </ruleList>
+    </actionGroup>
+
+    <actionGroup>
+      <ruleList>
+          <compareText text="${eap_tmp_var}" logic="does_not_equal" value=""/>
+      </ruleList>
+      <actionList>
+        <setInstallerVariable name="${version}" value="${eap_tmp_var}" persist="1"/>
+        <setInstallerVariable name="${installed}" value="1" persist="1"/>
+        <logMessage text="=> PEM-HTTPD (version: ${eap_tmp_var}) installation found"/>
+
+        <if>
+          <conditionRuleList>
+            <compareText text="${platform_name}" logic="equals" value="windows"/>
+          </conditionRuleList>
+          <actionList>
+            <!-- Installation Directory -->
+            <registryGet wowMode="64" name="Location" variable="eap_tmp_var"
+              key="HKEY_LOCAL_MACHINE\SOFTWARE\EnterpriseDB\PEM-HTTPD"/>
+            <setInstallerVariable name="${installdir}" value="${eap_tmp_var}" persist="1"/>
+            <logMessage text="=> PEM-HTTPD Directory: ${eap_tmp_var}"/>
+
+            <!-- Apache Path -->
+            <registryGet wowMode="64" name="APACHE_HOME" variable="eap_tmp_var"
+              key="HKEY_LOCAL_MACHINE\SOFTWARE\EnterpriseDB\PEM-HTTPD"/>
+            <setInstallerVariable name="${apachePath}" value="${eap_tmp_var}" persist="1"/>
+            <logMessage text="=> Apache HOME: ${eap_tmp_var}"/>
+
+            <!-- Apache Port -->
+            <registryGet wowMode="64" name="APACHE_HPORT" variable="eap_tmp_var"
+              key="HKEY_LOCAL_MACHINE\SOFTWARE\EnterpriseDB\PEM-HTTPD"/>
+            <setInstallerVariable name="${port}" value="${eap_tmp_var}" persist="1"/>
+            <logMessage text="=> Apache PORT: ${eap_tmp_var}"/>
+
+          </actionList>
+          <elseActionList>
+            <!-- Installation Directory -->
+            <iniFileGet file="/etc/postgres-reg.ini" variable="eap_tmp_var"
+              section="PEM-HTTPD" key="InstallationDirectory"/>
+            <setInstallerVariable name="${installdir}" value="${eap_tmp_var}" persist="1"/>
+            <logMessage text="=> PEM-HTTPD Directory: ${eap_tmp_var}"/>
+
+            <!-- Apache Path -->
+            <iniFileGet file="/etc/postgres-reg.ini" variable="eap_tmp_var"
+              section="PEM-HTTPD" key="APACHE_HOME"/>
+            <setInstallerVariable name="${apachePath}" value="${eap_tmp_var}" persist="1"/>
+            <logMessage text="=> Apache HOME: ${eap_tmp_var}"/>
+
+            <!-- Apache Port -->
+            <iniFileGet file="/etc/postgres-reg.ini" variable="eap_tmp_var"
+              section="PEM-HTTPD" key="APACHE_HPORT"/>
+            <setInstallerVariable name="${port}" value="${eap_tmp_var}" persist="1"/>
+            <logMessage text="=> Apache PORT: ${eap_tmp_var}"/>
+
+            <setInstallerVariable name="eap_ld_library_path_env" value="${env(LD_LIBRARY_PATH)}"/>
+            <setEnvironmentVariable name="LD_LIBRARY_PATH" value="${apachePath}/lib">
+              <ruleList>
+                <compareText text="${apachePath}" logic="does_not_equal" value=""/>
+              </ruleList>
+            </setEnvironmentVariable>
+
+          </elseActionList>
+        </if>
+      </actionList>
+    </actionGroup>
+
+    <setInstallerVariable name="lp_tmp_var" value=""/>
+    <registryGet wowMode="64" name="Version" variable="lp_tmp_var"
+      key="HKEY_LOCAL_MACHINE\SOFTWARE\EnterpriseDB\languagepack\edb\v3">
+      <ruleList>
+        <compareText text="${platform_name}" logic="equals" value="windows"/>
+      </ruleList>
+    </registryGet>
+    <setInstallerVariable name="${languagepackVersion}" value="${lp_tmp_var}" persist="1">
+      <ruleList>
+        <compareText text="${platform_name}" logic="equals" value="windows"/>
+      </ruleList>
+    </setInstallerVariable>
+    <actionGroup>
+      <actionList>
+        <touchFile path="/etc/postgres-reg.ini"/>
+        <iniFileGet file="/etc/postgres-reg.ini" variable="lp_tmp_var"
+          section="edb_languagepack_v3" key="Version"/>
+        <setInstallerVariable name="${languagepackVersion}" value="${lp_tmp_var}" persist="1"/>
+      </actionList>
+      <ruleList>
+        <compareText text="${platform_name}" logic="does_not_equal" value="windows"/>
+      </ruleList>
+    </actionGroup>
+
+    <actionGroup>
+      <ruleList>
+        <compareText text="${lp_tmp_var}" logic="does_not_equal" value=""/>
+      </ruleList>
+      <actionList>
+        <logMessage text="=> LanguagePack (version: ${lp_tmp_var}) installation found"/>
+
+	<if>
+	  <conditionRuleList>
+	    <compareText text="${platform_name}" logic="equals" value="windows"/>
+	  </conditionRuleList>
+	  <actionList>
+	    <!-- Python Path -->
+            <registryGet wowMode="64" name="Base Directory" variable="lp_tmp_var"
+              key="HKEY_LOCAL_MACHINE\SOFTWARE\EnterpriseDB\languagepack\edb\v3"/>
+            <setInstallerVariable name="${pythonPath}" value="${lp_tmp_var}\Python-3.10" persist="1"/>
+            <logMessage text="=> Python HOME: ${lp_tmp_var}\Python-3.10"/>
+          </actionList>
+          <elseActionList>
+             <!-- Python Path -->
+            <iniFileGet file="/etc/postgres-reg.ini" variable="lp_tmp_var"
+              section="edb_languagepack_v3" key="InstallationDirectory"/>
+            <setInstallerVariable name="${pythonPath}" value="${lp_tmp_var}/Python-3.10" persist="1"/>
+            <logMessage text="=> Python HOME: ${lp_tmp_var}/Python-3.10"/>
+
+            <setInstallerVariable name="lp_ld_library_path_env" value="${env(LD_LIBRARY_PATH)}"/>
+            <setEnvironmentVariable name="LD_LIBRARY_PATH" value="${pythonPath}/lib">
+              <ruleList>
+                <compareText text="${pythonPath}" logic="does_not_equal" value=""/>
+              </ruleList>
+            </setEnvironmentVariable>
+          </elseActionList>
+        </if>
+      </actionList>
+    </actionGroup>
+
+    <setEnvironmentVariable name="LD_LIBRARY_PATH" value="${eap_ld_library_path_env}">
+      <ruleList>
+        <compareText text="${eap_ld_library_path_env}" logic="does_not_equal" value=""/>
+        <compareText text="${lp_ld_library_path_env}" logic="equals" value=""/>
+        <compareText text="${platform_name}" logic="does_not_equal" value="windows"/>
+      </ruleList>
+    </setEnvironmentVariable>
+
+    <setEnvironmentVariable name="LD_LIBRARY_PATH" value="${lp_ld_library_path_env}">
+      <ruleList>
+        <compareText text="${lp_ld_library_path_env}" logic="does_not_equal" value=""/>
+        <compareText text="${eap_ld_library_path_env}" logic="equals" value=""/>
+        <compareText text="${platform_name}" logic="does_not_equal" value="windows"/>
+      </ruleList>
+    </setEnvironmentVariable>
+
+    <setEnvironmentVariable name="LD_LIBRARY_PATH" value="${eap_ld_library_path_env}:${lp_ld_library_path_env}">
+      <ruleList>
+        <compareText text="${lp_ld_library_path_env}" logic="does_not_equal" value=""/>
+        <compareText text="${eap_ld_library_path_env}" logic="does_not_equal" value=""/>
+        <compareText text="${platform_name}" logic="does_not_equal" value="windows"/>
+      </ruleList>
+    </setEnvironmentVariable>
+
+    <logMessage
+      text="--------------------------------------------------------------------------------------"/>
+  </actionList>
+</actionDefinition>

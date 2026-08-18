@@ -1,0 +1,26 @@
+{##################################################}
+{# This will be specific macro for pem.exception. #}
+{##################################################}
+{% macro INSERT(jscid, data) -%}
+-- Inserting a schedule exception {% if jscid %}(schedule: {{ jscid|qtLiteral(conn)}}){% endif %}
+
+INSERT INTO pem.exception (
+    jexscid, jexdate, jextime
+) VALUES (
+    {% if jscid %}{{ jscid|qtLiteral(conn) }}{% else %}scid{% endif %}, {% if
+data.jexdate %}to_date({{ data.jexdate|qtLiteral(conn, True) }}, 'YYYY-MM-DD')::date{% else %}NULL::date{% endif %}, {% if data.jextime %}{{ data.jextime|qtLiteral(conn, True) }}::time{% else %}NULL::time{% endif %}
+
+);
+
+{%- endmacro %}
+{% macro UPDATE(jscid, data) -%}
+-- Updating an existing schedule exception (id: {{ data.jexid|qtLiteral(conn) }}, schedule: {{ jscid|qtLiteral(conn) }})
+UPDATE pem.exception SET
+    {% if 'jexdate' in data %}jexdate={% if data.jexdate %}to_date({{ data.jexdate|qtLiteral(conn, True) }}, 'YYYY-MM-DD')::date{% else %}NULL::date{% endif %}{% endif %}{% if 'jextime' in data%}{% if 'jexdate' in data %}, {% endif %}jextime={% if data.jextime %}{{ data.jextime|qtLiteral(conn, True) }}::time{% else %}NULL::time{% endif %}{% endif %}
+
+WHERE jexid={{ data.jexid|qtLiteral(conn) }}::integer AND jexscid={{ jscid|qtLiteral(conn) }}::integer;
+{%- endmacro %}
+{% macro DELETE(jscid, data) -%}
+-- Deleting a schedule exception (id: {{ data.jexid|qtLiteral(conn) }}, schedule: {{ jscid|qtLiteral(conn) }})
+DELETE FROM pem.exception WHERE jexid={{ data.jexid|qtLiteral(conn) }}::integer AND jexscid={{ jscid|qtLiteral(conn) }}::integer;
+{%- endmacro %}

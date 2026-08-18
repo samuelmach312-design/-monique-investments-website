@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Configuration Report</title>
+</head>
+<body>
+  <div id="system-usage-report-root"></div>
+
+  <!-- Pass data from Flask to React via a global JavaScript variable -->
+  <script>
+    window.reportData = {{ report_data | tojson }};
+  </script>
+
+  <!-- Inline the JavaScript files -->
+  {% for js_file in js_files %}
+  <script type="application/javascript">
+    {{ js_file|safe }}
+  </script>
+  {% endfor %}
+</body>
+</html>

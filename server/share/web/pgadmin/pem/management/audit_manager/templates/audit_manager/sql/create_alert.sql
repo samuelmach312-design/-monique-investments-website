@@ -1,0 +1,17 @@
+SELECT
+    pem.create_alert(
+        (%s)::text,
+        (%s)::int4,
+        (%s)::int4,
+        (%s)::int4,
+        (%s)::text,
+        (%s)::text,
+        (%s)::text,
+        (%s)::text,
+        (%s)::text[],
+        (%s)::text,
+        (%s)::numeric[],
+        (%s)::int4,
+        (%s)::int4,
+        (%s)::boolean
+    )

@@ -1,0 +1,91 @@
+{################################################}
+{# This will be specific macro for pem.jobstep. #}
+{################################################}
+{% macro INSERT(jid, data) -%}
+
+-- Inserting a step (jobid: {{ jid|qtLiteral(conn) }})
+INSERT INTO pem.jobstep(
+    jstjobid, jstname, jstenabled, jstkind, jstonerror, jstcode, jstdesc,
+    server_id, database_name
+) VALUES (
+    {% if jid %}{{ jid|qtLiteral(conn) }}::integer{% else %}jid{% endif %},
+    {{ data.jstname|qtLiteral(conn, True) }}::text,
+    {% if data.jstenabled %}true{% else %}false{% endif %},
+    {% if data.jstkind %}'s'{% else %}'b'{% endif %}::character(1),
+    {{ data.jstonerror|qtLiteral(conn, True) }}::character(1),
+    {{ data.jstcode.replace("'", "''")|qtLiteral(conn, True) }}::text, {{ data.jstdesc|qtLiteral(conn, True) }}::text,
+    {% if data.server_id is not none %}{{ data.server_id|qtLiteral(conn) }}::integer{% else %}NULL{% endif %},
+    {{ data.database_name|qtLiteral(conn, True) }}::text
+){% if jid %} RETURNING jstid{% endif %};
+
+
+{%- endmacro %}
+{% macro UPDATE(jid, jstid, data) -%}
+{% set step_configs = [] %}{% if data.jstkind is defined %}{% if data.jstkind %}{%
+set tmp = step_configs.append(
+    'jstkind = \'s\'::character(1)'
+) %}{% else %}{%
+set tmp = step_configs.append(
+    'jstkind = \'b\'::character(1)'
+)%}{% endif %}{% endif %}{% if data.jstname is defined %}{%
+set tmp = step_configs.append(
+    'jstname = ' + data.jstname|qtLiteral(conn, True) + '::text'
+) %}{% endif %}{% if data.jstenabled is defined %}{%
+set tmp = step_configs.append(
+    'jstenabled = ' + data.jstenabled|qtLiteral(conn, True) + '::boolean'
+) %}{% endif %}{% if data.jstdesc is defined %}{%
+set tmp = step_configs.append(
+    'jstdesc = ' + data.jstdesc|qtLiteral(conn, True) + '::text'
+) %}{% endif %}{% if data.jstcode is defined %}{%
+set tmp = step_configs.append(
+    'jstcode = ' + data.jstcode.replace("'", "''")|qtLiteral(conn, True) + '::text'
+) %}{% endif %}
+
+{% if data.server_id is defined %}
+    {% if data.server_id is none or data.server_id == '' %}
+        {% set tmp = step_configs.append('server_id = NULL') %}
+    {% else %}
+        {% set tmp = step_configs.append('server_id = ' + data.server_id|qtLiteral(conn) + '::integer') %}
+    {% endif %}
+{% endif %}
+
+{% if data.database_name is defined %}
+    {% if data.database_name is none or data.database_name == '' %}
+        {% set tmp = step_configs.append('database_name = NULL') %}
+    {% else %}
+        {% set tmp = step_configs.append('database_name = ' + data.database_name|qtLiteral(conn, True) + '::text') %}
+    {% endif %}
+{% endif %}
+
+
+{% if data.jstonerror is defined %}{%
+set tmp = step_configs.append(
+    'jstonerror = ' + data.jstonerror|qtLiteral(conn, True) + '::character(1)'
+) %}{% endif %}
+{% if step_configs|length > 0 %}
+
+-- Updating the existing step (id: {{ jstid|qtLiteral(conn) }} jobid: {{ jid|qtLiteral(conn) }})
+UPDATE pem.jobstep
+SET
+    {{ step_configs|join(',') }}
+WHERE jstid={{ jstid|qtLiteral(conn) }}::integer AND jstjobid={{ jid|qtLiteral(conn) }}::integer;
+{% endif %}
+{%- endmacro %}
+{% macro DELETE(jid, jstid) -%}
+
+-- Deleting a step (id: {{ jstid|qtLiteral(conn) }}, jobid: {{ jid|qtLiteral(conn) }})
+DELETE FROM pem.jobstep WHERE jstid={{ jstid|qtLiteral(conn) }}::integer AND jstjobid={{ jid|qtLiteral(conn) }}::integer;
+{%- endmacro %}
+{% macro PROPERTIES(jid, jstid) -%}
+SELECT
+    jstid, jstjobid, jstname, jstdesc, jstenabled, jstcode, server_id::text,
+    database_name, jstonerror, jstkind = 's'::character(1) AS jstkind
+FROM
+    pem.jobstep
+WHERE
+{% if jstid %}
+    jstid = {{ jstid|qtLiteral(conn) }}::integer AND
+{% endif %}
+    jstjobid = {{ jid|qtLiteral(conn) }}::integer
+ORDER BY jstname;
+{%- endmacro %}

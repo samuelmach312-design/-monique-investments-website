@@ -1,0 +1,1 @@
+DELETE FROM pem.dashboard_section WHERE did=(%s)::int4;

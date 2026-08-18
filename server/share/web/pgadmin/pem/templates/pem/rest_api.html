@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Postgres Enterprise Manager REST APIs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" rel="stylesheet"
+          href="{{ url_for('pem.static', filename='css/swagger-ui.css') }}"/>
+    <link rel="shortcut icon" href="{{ url_for('redirects.favicon') }}"/>
+    <script src="{{ url_for('pem.static', filename='swagger-ui-bundle.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('pem.static', filename='swagger-ui-standalone-preset.js') }}" type="text/javascript"></script>
+    <style>
+        html
+        {
+          box-sizing: border-box;
+          overflow: -moz-scrollbars-vertical;
+          overflow-y: scroll;
+        }
+        *,
+        *:before,
+        *:after
+        {
+          box-sizing: inherit;
+        }
+
+        body {
+          margin:0;
+          background: #fafafa;
+        }
+        // Custom css for WCAG accessibility resolution
+        .swagger-ui .info .title small{
+          background: #555859 !important;
+        }
+
+        .opblock-tag small {
+          background: transparent !important;
+        }
+        .swagger-ui .info a {
+          color: #12539D;
+        }
+
+        .swagger-ui .opblock.opblock-get .opblock-summary-method {
+          background: #1059A4;
+        }
+
+        .swagger-ui .opblock.opblock-put .opblock-summary-method {
+          background: #C34105;
+        }
+
+        .swagger-ui .opblock.opblock-post .opblock-summary-method {
+          background: #0B623A;
+        }
+
+        .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+          background: #B21111;
+        }
+
+        .swagger-ui .opblock.opblock-deprecated .opblock-summary-method {
+          background: #565656;
+        }
+
+        .swagger-ui .info .title small.version-stamp {
+          background-color: #13661F;
+        }
+
+        .swagger-ui .highlight-code>.microlight {
+          max-height: none;
+        }
+
+    </style>
+    <style type="text/css">
+.swagger-ui .Resizer.vertical.disabled{display:none}
+.swagger-ui > div.wrapper > section.clear > span > a > img {display: none;}
+.swagger-ui > div.topbar {display: none;}
+    </style>
+
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+
+    <script>
+      // initially render first API
+      window.onload = function() {
+        // Build a system
+        const ui = SwaggerUIBundle({
+          url: '{{ url }}',
+          dom_id: '#swagger-ui',
+          presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+          ],
+          plugins: [
+            SwaggerUIBundle.plugins.DownloadUrl
+          ],
+          layout: "StandaloneLayout",
+          validatorUrl: 'none',
+          "syntaxHighlight": {
+            "activated": true,
+            "theme": "tomorrow-night"
+          }
+        })
+
+        window.ui = ui;
+        // Call JS method to update swagger UI for accessibility issue resolution
+        updateUiForAccessibility();
+      };
+
+      function updateUiForAccessibility(){
+          setTimeout(function(){
+
+            // Add aria-label to select box
+            document.getElementsByClassName('download-url-input')[0].setAttribute('aria-label','download-btn');
+            document.getElementsByTagName('select')[0].setAttribute('aria-label','scheme-select');
+            document.getElementsByClassName('info__extdocs')[0].remove();
+
+            // Add aria-label to expand btn
+            var expand_btn = document.getElementsByClassName('expand-operation');
+            for(var i = 0; i < expand_btn.length; i++){
+              expand_btn[i].setAttribute('aria-label','expand-btn-' + i);
+            }
+
+            var elements = document.getElementsByClassName('opblock');
+            for(var k = 0; k < elements.length; k++){
+              elements[k].addEventListener('click', function() {
+                setTimeout(function(){
+                  var input_tags = document.getElementsByTagName('input');
+                  var buttons = document.getElementsByTagName('button');
+                  var selects = document.getElementsByTagName('select');
+                  var spans = document.getElementsByTagName('span');
+
+                  // Add aria-label to input box
+                  for(var j = 0; j < input_tags.length; j++){
+                    input_tags[j].setAttribute('aria-label','input-text-' + j);
+                  }
+
+                  // Add aria-label to buttons
+                  for(var b = 0; b < buttons.length; b++){
+                    buttons[b].setAttribute('aria-label','btn-text-' + b);
+                  }
+
+                  // Add aria-label to select
+                  for(var s = 0; s < selects.length; s++){
+                    selects[s].setAttribute('aria-label','select-text-' + s);
+                  }
+
+                  // Change color of integer span
+                  for(var span = 0; span < spans.length; span++){
+                    var colorStyle = window.getComputedStyle(spans[span]).color;
+                    if(colorStyle == 'rgb(211, 99, 99)'){
+                      spans[span].style.color = 'rgb(252, 194, 140)';
+                    }
+                  }
+                },700);
+              }, {passive: false});
+            }
+
+            // Set background color of version number badge
+            document.getElementsByTagName('small')[0].style.background = '#555859';
+
+          },700);
+        }
+
+    </script>
+  </body>
+</html>

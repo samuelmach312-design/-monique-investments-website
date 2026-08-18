@@ -1,0 +1,206 @@
+{
+  "objects": ["pem", "postgres", "test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9", "test10"],
+  "chart_data": {
+    "1234": {
+      "1": {
+        "colors": ["#FF0000", "#FFDD33"],
+        "spreadsheet": false,
+        "timeout": 1800000,
+        "success": 1,
+        "error": "",
+        "series": [{
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "126"],
+                ["Date(1504203302153)", "226"],
+                ["Date(1504209411244)", "526"],
+                ["Date(1504215520335)", "826"]
+            ],
+            "shadowSize": 4,
+            "color": "#FF0000",
+            "label": "pem"
+        }, {
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "410"],
+                ["Date(1504203302153)", "540"],
+                ["Date(1504209411244)", "780"],
+                ["Date(1504209411244)", "826"]
+            ],
+            "shadowSize": 4,
+            "color": "#FFDD33",
+            "label": "postgres"
+        }]
+      },
+      "2": {
+        "colors": ["#00ccff", "#ff9900"],
+        "spreadsheet": false,
+        "timeout": 1800000,
+        "success": 1,
+        "error": "",
+        "series": [{
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "223"],
+                ["Date(1504203302153)", "443"],
+                ["Date(1504209411244)", "643"],
+                ["Date(1504215520335)", "876"]
+            ],
+            "shadowSize": 4,
+            "color": "#00ccff",
+            "label": "test1"
+        }, {
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "149"],
+                ["Date(1504203302153)", "230"],
+                ["Date(1504209411244)", "433"]
+            ],
+            "shadowSize": 4,
+            "color": "#ff9900",
+            "label": "test2"
+        }]
+      },
+      "3": {
+        "colors": ["#333300", "#339966"],
+        "spreadsheet": false,
+        "timeout": 1800000,
+        "success": 1,
+        "error": "",
+        "series": [{
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "118"],
+                ["Date(1504203302153)", "389"],
+                ["Date(1504209411244)", "343"],
+                ["Date(1504215520335)", "989"]
+            ],
+            "shadowSize": 4,
+            "color": "#333300",
+            "label": "test3"
+        }, {
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "120"],
+                ["Date(1504203302153)", "240"],
+                ["Date(1504209411244)", "500"]
+            ],
+            "shadowSize": 4,
+            "color": "#339966",
+            "label": "test4"
+        }]
+      },
+      "4": {
+        "colors": ["#ffcc00", "#00ff00"],
+        "spreadsheet": false,
+        "timeout": 1800000,
+        "success": 1,
+        "error": "",
+        "series": [{
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "23"],
+                ["Date(1504203302153)", "34"],
+                ["Date(1504209411244)", "56"],
+                ["Date(1504215520335)", "72"]
+            ],
+            "shadowSize": 4,
+            "color": "#ffcc00",
+            "label": "test5"
+        }, {
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "14"],
+                ["Date(1504203302153)", "12"],
+                ["Date(1504209411244)", "133"]
+            ],
+            "shadowSize": 4,
+            "color": "#00ff00",
+            "label": "test6"
+        }]
+      },
+      "5": {
+        "colors": ["#99ccff", "#993366"],
+        "spreadsheet": false,
+        "timeout": 1800000,
+        "success": 1,
+        "error": "",
+        "series": [{
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "18"],
+                ["Date(1504203302153)", "389"],
+                ["Date(1504209411244)", "143"],
+                ["Date(1504215520335)", "889"]
+            ],
+            "shadowSize": 4,
+            "color": "#99ccff",
+            "label": "test7"
+        }, {
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "820"],
+                ["Date(1504203302153)", "940"],
+                ["Date(1504209411244)", "10500"]
+            ],
+            "shadowSize": 4,
+            "color": "#993366",
+            "label": "test8"
+        }]
+      },
+      "6": {
+        "colors": ["#99cc00", "ff99cc"],
+        "spreadsheet": false,
+        "timeout": 1800000,
+        "success": 1,
+        "error": "",
+        "series": [{
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "23"],
+                ["Date(1504203302153)", "34"],
+                ["Date(1504209411244)", "56"],
+                ["Date(1504215520335)", "72"]
+            ],
+            "shadowSize": 4,
+            "color": "#99cc00",
+            "label": "test9"
+        }, {
+            "points": {
+                "show": false
+            },
+            "data": [
+                ["Date(1504197193062)", "14"],
+                ["Date(1504203302153)", "12"],
+                ["Date(1504209411244)", "133"]
+            ],
+            "shadowSize": 4,
+            "color": "#ff99cc",
+            "label": "test10"
+        }]
+      }
+    }
+  }
+}

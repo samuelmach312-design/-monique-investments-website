@@ -1,0 +1,32 @@
+{% macro element(icon, label, id, value, parentclass) -%}
+<li style="display: inline-block;" class="pr-2">
+  <span class="text-gray-darker my-auto pl-2 pr-2 row">
+    <span class="my-auto dashboard-info-icon {{ parentclass }} pr-1" aria-hidden="true"><i class="{{ icon }}" role="img"></i></span>
+    <span class="my-auto">
+      <span class="my-auto dashboard-info-lable">{{ label|safe }}</span>
+      <span class="variable my-auto {{ id }}">{{ value|default("")|safe }}</span>
+    </span>
+  </span>
+</li>
+{%- endmacro %}
+{% macro element_with_placeholder(icon, label, id, place_holder_label_id, place_holder_label, placeholder_separator, placeholder_id, parentclass) -%}
+<li style="display: inline-block;" class="pr-2">
+  <span class="text-gray-darker my-auto pl-2 pr-2 row">
+    <span class="my-auto dashboard-info-icon {{ parentclass }} pr-1" aria-hidden="true"><i class="{{ icon }}" role="img"></i></span>
+    <span class="my-auto">
+      <span class="my-auto dashboard-info-lable">{{ label }}</span>
+      <span class="my-auto">
+        <span class="{{ id }}"></span>
+        <span class="{{ place_holder_label_id }} d-none">
+        <span class="text-gray-darker pr-1 pl-1 ">
+            <span>(</span>
+            <span>{{ place_holder_label|safe }}</span>
+            <span class="pr-1">{{ placeholder_separator|safe }}</span>
+            <span class="{{ placeholder_id }}"></span>
+            <span class="text-gray-darker">)</span>
+        </span>
+      </span>
+    </span>
+  </span>
+</span>
+{%- endmacro %}

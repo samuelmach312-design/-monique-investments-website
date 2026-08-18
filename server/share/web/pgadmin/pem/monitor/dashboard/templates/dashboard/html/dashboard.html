@@ -1,0 +1,108 @@
+{% extends "dashboard/html/template.html" %}
+
+{% block title %}{{ dashboard_title }}{% endblock %}
+
+{% block css_block %}
+    <!-- Base template stylesheets -->
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='js/generated/style.css')}}"/>
+{% endblock %}
+
+{% block js_block %}
+    <script type="text/javascript"
+            src="{{ url_for('static', filename='vendor/require/require.js') }}"></script>
+
+    <script type="text/javascript">
+require.config({
+    baseUrl: '',
+{% if config.APP_VERSION_PARAM is not none and config.APP_VERSION_PARAM != '' %}
+    urlArgs: '{{config.APP_VERSION_PARAM}}={{config.APP_VERSION_INT}}',
+{% endif %}
+    waitSeconds: 0,
+    shim: {},
+    paths: {
+        sources: "{{ url_for('static', filename='js') }}",
+        codemirror: "{{ url_for('static', filename='js/generated/codemirror') }}",
+        'pgadmin.browser.utils': "{{ url_for('browser.index') }}" + "js/utils",
+        'pgadmin.browser.endpoints': "{{ url_for('browser.index') }}" + "js/endpoints",
+        'pgadmin.browser.messages': "{{ url_for('browser.index') }}" + "js/messages",
+        'pgadmin.server.supported_servers': "{{ url_for('browser.index') }}" + "server/supported_servers",
+        'pgadmin.user_management.current_user': "{{ url_for('user_management.index') }}" + "current_user",
+        'translations': "{{ url_for('tools.index') }}" + "translations",
+        /* PEM Specific */
+        'pem.monitor.dashboard.levels': "{{ url_for('pem_dashboard.index') }}" + 'levels',
+        'pem.monitor.dashboard.list': "{{ url_for('pem_dashboard.index') }}" + 'dashboards',
+        'pem.info': '{{ url_for("pem.info_js")[:-3] }}',
+        'pem.current_user': "{{ url_for('user_management.current_user_info')[:-3] }}",
+        'pem.dashboard': "{{ url_for('static', filename='js/generated/pem.dashboard.bundle') }}",
+    },
+});
+    </script>
+
+    <!-- View specified scripts -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/generated/vendor.main.js') }}" ></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/generated/vendor.others.js') }}" ></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/generated/pgadmin_commons.js') }}" ></script>
+    <script>
+        /* This is used to change publicPath of webpack at runtime */
+        window.getChunkURL = function() {
+            return "{{ url_for('static', filename='js') }}/generated/";
+        };
+    </script>
+    <script type="text/javascript">
+window.onload = function() {
+    try {
+        require(
+            ['pem.dashboard', 'sources/generated/pem_monitor','sources/generated/codemirror'],
+            function(Dashboard) {
+                Dashboard.init(
+                    {{ did|default(0, true) }},
+                    {{ trans_id|default(0, true) }},
+                    '{{ url_for('pem_dashboard.index') }}',
+                    '{{ url_for('pem_dashboard.index') }}settings',
+                    '{{ url_for('alerts.index') }}',
+                    {{ context|tojson|safe }},
+                    {{ info|tojson|safe }},
+                    {{ content|tojson|safe }},
+                    {{ menu_content|tojson|safe }}
+                );
+            },
+            function(e) {
+                /* TODO:: Show proper error dialog */
+                console.error((e && e.stack) || e);
+            });
+    } catch (e) {
+        /* Show proper error dialog */
+        console.error((e && e.stack) || e);
+    }
+};
+    </script>
+{% endblock %}
+
+{% block dashboard_body %}
+<div class="row mb-2">
+    <div class="col-12">
+        <div class="dashboard-body">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block dashboard_body_info %}
+{% if 'is_db_excluded' in context and context.is_db_excluded is sameas true %}
+    {# If database is excluded then display this banner #}
+    <div>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <i class="fa fa-exclamation-circle text-warning fa-lg pl-2 pr-2"
+           title="{{ gettext('Database is excluded from monitoring') }}"
+           aria-label="{{ gettext('Database is excluded from monitoring') }}">
+        </i>
+        {{ gettext("Database") }} <strong>{{ context.database}}</strong> {{ gettext("is excluded from monitoring.
+            Data rendered in the graphs may not represent the actual value.") }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
