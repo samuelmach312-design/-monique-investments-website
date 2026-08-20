@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+﻿import React, { useState, useEffect } from 'react'
 import { useCart } from '../context/CartContext'
 import { useSearchParams } from "react-router-dom"
 import CategoryFilter, { categoryMap } from '../components/CategoryFilter'
@@ -73,6 +73,17 @@ const HARDCODED_PRODUCTS = [
   { id: 64, name: "Nike Air Max 90 Beige Black Orange", price: 4000, category: "Shoes", brand: "Nike", description: "Air Max 90 beige black with orange swoosh. Sizes 40-45", image_url: "/images/airmax-90-beige-black-orange.jpg" },
   { id: 65, name: "New Balance 530 White Black ABZORB", price: 3800, category: "Shoes", brand: "New Balance", description: "NB 530 white mesh black N ABZORB sole. Sizes 37-44", image_url: "/images/nb-530-white-black.jpg" },
   { id: 66, name: "Adidas Samba XLG Platform White Black Gum", price: 3800, category: "Shoes", brand: "Adidas", description: "Adidas Samba XLG platform white/black gum sole gold lettering. Sizes 37-44", image_url: "/images/adidas-samba-xlg-platform.jpg" },
+  // --- 10 NEW SWEATERS / T-SHIRTS ---
+  { id: 67, name: "B Logo Black Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "B Logo Black Sweater - premium knit Size M-XL", image_url: "/images/sweaters/b-logo-black.jpg" },
+  { id: 68, name: "B Logo Dark Grey Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "B Logo Dark Grey Sweater Size M-XL", image_url: "/images/sweaters/b-logo-dark-grey.jpg" },
+  { id: 69, name: "B Logo Light Grey Tan Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "B Logo Light Grey Tan Sweater Size M-XL", image_url: "/images/sweaters/b-logo-light-grey-tan.jpg" },
+  { id: 70, name: "Black Floral Velvet Sweater", price: 4000, category: "T-Shirts", brand: "Monique", description: "Black Floral Velvet Sweater Size M-XL", image_url: "/images/sweaters/black-floral-velvet.jpg" },
+  { id: 71, name: "Brown Marble Crew Sweater", price: 3800, category: "T-Shirts", brand: "Monique", description: "Brown Marble Crew Sweater Size M-XL", image_url: "/images/sweaters/brown-marble-crew.jpg" },
+  { id: 72, name: "Charcoal Zip Sweater", price: 3800, category: "T-Shirts", brand: "Monique", description: "Charcoal Zip Sweater Size M-XL", image_url: "/images/sweaters/charcoal-zip.jpg" },
+  { id: 73, name: "Cream Zip Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "Cream Zip Sweater Size M-XL", image_url: "/images/sweaters/cream-zip.jpg" },
+  { id: 74, name: "Light Grey Zip Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "Light Grey Zip Sweater Size M-XL", image_url: "/images/sweaters/light-grey-zip.jpg" },
+  { id: 75, name: "Navy Zip Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "Navy Zip Sweater Size M-XL", image_url: "/images/sweaters/navy-zip.jpg" },
+  { id: 76, name: "Off White Zip Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "Off White Zip Sweater Size M-XL", image_url: "/images/sweaters/off-white-zip.jpg" },
 ];
 
 export default function Home() {
@@ -98,9 +109,14 @@ export default function Home() {
         setLoading(true)
         const data = await getProducts()
         if (data?.products && data.products.length > 0) {
-          // Merge: backend products first, then hardcoded that aren't duplicates
-          const backendIds = new Set(data.products.map(p => p.name))
-          const merged = [...data.products, ...HARDCODED_PRODUCTS.filter(h => !backendIds.has(h.name))]
+          // FIX: Prioritize HARDCODED (has correct images), ignore backend null images
+          const hardcodedNames = new Set(HARDCODED_PRODUCTS.map(p => p.name))
+          const backendOnly = data.products.filter(p => !hardcodedNames.has(p.name) && (p.image_url || p.image) )
+          // Merge: keep all hardcoded (76) + backend only that have images
+          const merged = [...HARDCODED_PRODUCTS, ...backendOnly.map(p => ({
+            ...p,
+            image_url: p.image_url || p.image || p.imageUrl
+          })).filter(p => p.image_url && !p.image_url.includes('/uploads/') && p.image_url !== null)]
           setProducts(merged)
         } else {
           setProducts(HARDCODED_PRODUCTS)
@@ -160,7 +176,7 @@ export default function Home() {
           <h1>Monique Investments</h1>
           <div className="page-header-row">
             <h2>{activeCategory === 'All' ? 'All Products' : activeCategory}</h2>
-            <span className="product-count">{filteredProducts.length} products {products.length > HARDCODED_PRODUCTS.length ? `(${products.length - HARDCODED_PRODUCTS.length} new)` : ''}</span>
+            <span className="product-count">{filteredProducts.length} products {products.length >= 76 ? `(${products.length} total)` : ''}</span>
           </div>
         </div>
 
