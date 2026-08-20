@@ -1,87 +1,87 @@
-.app {
-  min-height: 100vh;
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: var(--bg);
-  color: var(--text);
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  overflow-x: hidden; /* Prevent horizontal scroll */
-}
-
-* {
-  box-sizing: border-box; /* Fixes most overflow bugs */
-}
-
-.main-content {
-  flex: 1;
-  width: 100%;
-}
-
-.header, .footer {
-  padding-left: max(16px, env(safe-area-inset-left));
-  padding-right: max(16px, env(safe-area-inset-right));
-}
-
-/* JUMIA-STYLE PRODUCT GRID */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 cols mobile */
-  gap: 8px;
-  padding: 8px 12px 24px 12px;
-  width: 100%;
-}
-
-@media (min-width: 640px) {
-  .products-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    padding: 12px 16px 32px 16px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .products-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    padding: 16px 24px 40px 24px;
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-}
-
-/* JUMIA-STYLE HEADER SPACING */
+/* PRO LUXURY HEADER - Monique Investments */
 .page-header {
-  padding: 8px 12px 4px 12px;
+  background: linear-gradient(135deg, #0a0a0a 0%, #151515 50%, #1a1a1a 100%);
+  padding: 28px 16px 20px 16px;
+  margin: 0;
+  position: relative;
+  border-bottom: 2px solid var(--gold);
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.8;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 40%;
+  height: 200%;
+  background: radial-gradient(ellipse, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .page-header h1 {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 4px 0;
-  line-height: 1.2;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 0%, #D4AF37 40%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 10px 0;
+  line-height: 1.1;
+  position: relative;
+  z-index: 1;
+  font-family: 'Inter', sans-serif;
 }
 
 .page-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
+  z-index: 1;
 }
 
 .page-header h2 {
-  font-size: 18px;
+  font-size: 13px;
   font-weight: 600;
   margin: 0;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
 }
 
 .product-count {
-  font-size: 14px;
-  color: #6b7280;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.08));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: var(--gold);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(10px);
 }
 
-/* Hide scrollbar like Jumia */
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
+@media (min-width: 768px) {
+  .page-header {
+    padding: 36px 24px 24px 24px;
+  }
+  .page-header h1 {
+    font-size: 32px;
+  }
+  .page-header h2 {
+    font-size: 14px;
+  }
+}
