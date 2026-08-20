@@ -84,6 +84,16 @@ const HARDCODED_PRODUCTS = [
   { id: 74, name: "Light Grey Zip Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "Light Grey Zip Sweater Size M-XL", image_url: "/images/sweaters/light-grey-zip.jpg" },
   { id: 75, name: "Navy Zip Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "Navy Zip Sweater Size M-XL", image_url: "/images/sweaters/navy-zip.jpg" },
   { id: 76, name: "Off White Zip Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "Off White Zip Sweater Size M-XL", image_url: "/images/sweaters/off-white-zip.jpg" },
+  { id: 77, name: "Black White Striped Polo Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "Black/white striped polo collar sweater - thick knit Size M-XL", image_url: "/images/sweaters/polo-striped-bw.jpg" },
+  { id: 78, name: "Cream Quarter-Zip Sweater", price: 3800, category: "T-Shirts", brand: "Monique", description: "Cream quarter-zip fleece sweater Size M-XL", image_url: "/images/sweaters/quarter-cream-lolo.jpg" },
+  { id: 79, name: "White Quarter-Zip Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "White minimal quarter-zip sweater Size M-XL", image_url: "/images/sweaters/quarter-white-minimal.jpg" },
+  { id: 80, name: "Sage Green Quarter-Zip Sweater", price: 3800, category: "T-Shirts", brand: "Monique", description: "Sage green quarter-zip sweater Size M-XL", image_url: "/images/sweaters/quarter-sage.jpg" },
+  { id: 81, name: "Heather Light Grey Quarter-Zip", price: 3500, category: "T-Shirts", brand: "Monique", description: "Heather light grey quarter-zip with 3-line logo Size M-XL", image_url: "/images/sweaters/quarter-heather-light.jpg" },
+  { id: 82, name: "Grey Undefeated Quarter-Zip", price: 3800, category: "T-Shirts", brand: "Monique", description: "Grey quarter-zip with embroidered logo Size M-XL", image_url: "/images/sweaters/quarter-grey-undef.jpg" },
+  { id: 83, name: "Beige 3-Line Quarter-Zip Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "Beige 3-line quarter-zip sweater Size M-XL", image_url: "/images/sweaters/quarter-beige-line.jpg" },
+  { id: 84, name: "Cream Undefeated Quarter-Zip", price: 3800, category: "T-Shirts", brand: "Monique", description: "Cream quarter-zip with embroidered logo Size M-XL", image_url: "/images/sweaters/quarter-cream-undef.jpg" },
+  { id: 85, name: "Black Oversized Hoodie", price: 4000, category: "T-Shirts", brand: "Monique", description: "Black oversized hoodie with kangaroo pocket Size M-XL", image_url: "/images/sweaters/hoodie-black.jpg" },
+  { id: 86, name: "Cream Oversized Hoodie", price: 4000, category: "T-Shirts", brand: "Monique", description: "Cream oversized hoodie with kangaroo pocket Size M-XL", image_url: "/images/sweaters/hoodie-cream.jpg" },
 ];
 
 export default function Home() {
