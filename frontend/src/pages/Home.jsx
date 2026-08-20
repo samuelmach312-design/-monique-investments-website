@@ -94,6 +94,16 @@ const HARDCODED_PRODUCTS = [
   { id: 84, name: "Cream Undefeated Quarter-Zip", price: 3800, category: "T-Shirts", brand: "Monique", description: "Cream quarter-zip with embroidered logo Size M-XL", image_url: "/images/sweaters/quarter-cream-undef.jpg" },
   { id: 85, name: "Black Oversized Hoodie", price: 4000, category: "T-Shirts", brand: "Monique", description: "Black oversized hoodie with kangaroo pocket Size M-XL", image_url: "/images/sweaters/hoodie-black.jpg" },
   { id: 86, name: "Cream Oversized Hoodie", price: 4000, category: "T-Shirts", brand: "Monique", description: "Cream oversized hoodie with kangaroo pocket Size M-XL", image_url: "/images/sweaters/hoodie-cream.jpg" },
+  { id: 87, name: "Navy Pullover Hoodie", price: 3800, category: "T-Shirts", brand: "Monique", description: "Navy blue pullover hoodie with kangaroo pocket Size M-XL", image_url: "/images/sweaters/navy-pullover-hoodie.jpg" },
+  { id: 88, name: "Grey Pullover Hoodie", price: 3800, category: "T-Shirts", brand: "Monique", description: "Light grey pullover hoodie Size M-XL", image_url: "/images/sweaters/grey-pullover-hoodie.jpg" },
+  { id: 89, name: "Navy Zip-Up Hoodie", price: 4000, category: "T-Shirts", brand: "Monique", description: "Navy blue zip-up hoodie Size M-XL", image_url: "/images/sweaters/navy-zip-hoodie.jpg" },
+  { id: 90, name: "Grey Zip-Up Hoodie", price: 4000, category: "T-Shirts", brand: "Monique", description: "Grey zip-up hoodie Size M-XL", image_url: "/images/sweaters/grey-zip-hoodie.jpg" },
+  { id: 91, name: "Cream Zip-Up Hoodie", price: 4000, category: "T-Shirts", brand: "Monique", description: "Cream zip-up hoodie Size M-XL", image_url: "/images/sweaters/cream-zip-hoodie.jpg" },
+  { id: 92, name: "Light Heather Zip Hoodie", price: 4000, category: "T-Shirts", brand: "Monique", description: "Light heather zip-up hoodie Size M-XL", image_url: "/images/sweaters/light-heather-zip-hoodie.jpg" },
+  { id: 93, name: "Charcoal Zip-Up Hoodie", price: 4000, category: "T-Shirts", brand: "Monique", description: "Charcoal grey zip-up hoodie Size M-XL", image_url: "/images/sweaters/charcoal-zip-hoodie.jpg" },
+  { id: 94, name: "Olive Paint Splatter Quarter-Zip", price: 3800, category: "T-Shirts", brand: "Monique", description: "Olive quarter-zip with paint splatter Size M-XL", image_url: "/images/sweaters/olive-paint-quarter.jpg" },
+  { id: 95, name: "Milano Grey Zip Knit Cardigan", price: 4500, category: "T-Shirts", brand: "Monique", description: "Grey Milano knit zip cardigan with pattern Size M-XL", image_url: "/images/sweaters/milano-grey-zip-knit.jpg" },
+  { id: 96, name: "White Cable Knit Sweater", price: 3500, category: "T-Shirts", brand: "Monique", description: "White textured cable knit sweater Size L", image_url: "/images/sweaters/white-cable-knit.jpg" },
 ];
 
 export default function Home() {
