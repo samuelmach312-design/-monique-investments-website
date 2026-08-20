@@ -6,7 +6,8 @@ export const categoryMap = {
   'Boots': ['Boots'],
   'Slides': ['Slides'],
   'Accessories': ['Accessories'],
-  'Shoe Care': ['Shoe Care']
+  'Shoe Care': ['Shoe Care'],
+  'T-Shirts': ['T-Shirts']
 }
 
 const categories = [
@@ -15,7 +16,8 @@ const categories = [
   { name: 'Boots', emoji: '🥾' },
   { name: 'Slides', emoji: '🩴' },
   { name: 'Accessories', emoji: '👔' },
-  { name: 'Shoe Care', emoji: '🧴' }
+  { name: 'Shoe Care', emoji: '🧴' },
+  { name: 'T-Shirts', emoji: '👕' }
 ]
 
 export default function CategoryFilter({ activeCategory, onSelect }) {
@@ -42,4 +44,3 @@ export default function CategoryFilter({ activeCategory, onSelect }) {
     </div>
   )
 }
-
