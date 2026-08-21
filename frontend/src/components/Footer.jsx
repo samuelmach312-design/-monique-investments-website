@@ -21,8 +21,8 @@ export default function Footer() {
               </a>
             </p>
             <p className="text-sm text-gray-400 mt-2">
-              <a href="tel:+254748440035" className="hover:text-white transition-colors">
-                +254 723808067
+              <a href="tel:+254723808067" className="hover:text-white transition-colors">
+                +254 723 808 067
               </a>
             </p>
           </div>

@@ -16,7 +16,7 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">Location</h3>
-                <p className="text-gray-600">Kangema, Central Province</p>
+                <p className="text-gray-600">chuka town, Central Province</p>
                 <p className="text-gray-600">Kenya</p>
               </div>
             </div>
@@ -27,8 +27,8 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                <a href="tel:+254748440035" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  +254 748 440 035
+                <a href="tel:+254723808067" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  +254 723 808 067
                 </a>
                 <p className="text-sm text-gray-500 mt-1">Mon - Sat, 8AM - 6PM</p>
               </div>
@@ -54,12 +54,12 @@ export default function Contact() {
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">WhatsApp</h3>
                 <a 
-                  href="https://wa.me/254748440035" 
+                  href="https://wa.me/254723808067" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-gray-600 hover:text-gray-900 transition-colors"
                 >
-                  +254 748 440 035
+                  +254 723 808 067
                 </a>
                 <p className="text-sm text-gray-500 mt-1">Fastest response time</p>
               </div>
@@ -86,12 +86,12 @@ export default function Contact() {
             <div className="mt-6 pt-6 border-t border-gray-200">
               <h4 className="font-semibold text-gray-900 mb-3">Free Pickup</h4>
               <p className="text-sm text-gray-600">
-                Kangema town pickup is free. Contact us on WhatsApp to arrange.
+                chuka town pickup is free. Contact us on WhatsApp to arrange.
               </p>
             </div>
 
             <a
-              href="https://wa.me/254748440035"
+              href="https://wa.me/254723808067"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all"

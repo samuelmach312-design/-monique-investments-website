@@ -42,7 +42,7 @@ export default function Terms() {
             </p>
             <p>
               <strong>Exception:</strong> If you receive a defective or wrong item due to our error, contact us 
-              within 24 hours on WhatsApp <a href="tel:+254748440035" className="text-gray-900 font-semibold hover:underline">+254 748 440 035</a> with 
+              within 24 hours on WhatsApp <a href="tel:+254723808067" className="text-gray-900 font-semibold hover:underline">+254 723 808 067</a> with 
               photos for resolution. We will replace the item at no extra cost.
             </p>
           </section>
@@ -70,8 +70,8 @@ export default function Terms() {
             </p>
             <div className="mt-3 space-y-1">
               <p><strong>Business:</strong> Monique Investments</p>
-              <p><strong>Location:</strong> Kangema, Central Province, Kenya</p>
-              <p><strong>Phone:</strong> <a href="tel:+254748440035" className="text-gray-900 font-semibold hover:underline">+254 748 440 035</a></p>
+              <p><strong>Location:</strong> chuka town, Central Province, Kenya</p>
+              <p><strong>Phone:</strong> <a href="tel:+254723808067" className="text-gray-900 font-semibold hover:underline">+254 723 808 067</a></p>
               <p><strong>Email:</strong> <a href="mailto:support@monique.co.ke" className="text-gray-900 font-semibold hover:underline">support@monique.co.ke</a></p>
             </div>
           </section>

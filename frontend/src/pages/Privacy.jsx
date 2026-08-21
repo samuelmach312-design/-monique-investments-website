@@ -65,8 +65,8 @@ export default function Privacy() {
               For privacy questions or concerns, contact us:
             </p>
             <div className="mt-3 space-y-1">
-              <p><strong>Phone:</strong> +254 748 440 035</p>
-              <p><strong>Location:</strong> Kangema, Central Province, Kenya</p>
+              <p><strong>Phone:</strong> +254 723 808 067</p>
+              <p><strong>Location:</strong> chuka town, Central Province, Kenya</p>
               <p><strong>Email:</strong> support@monique.co.ke</p>
             </div>
           </section>
