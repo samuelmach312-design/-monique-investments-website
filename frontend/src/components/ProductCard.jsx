@@ -35,7 +35,9 @@ export default function ProductCard({ product }) {
       <Link to={`/product/${product.id || product._id}`} className="relative overflow-hidden bg-[#f8fafc]">
         <img
           src={product.image_url || product.image}
+          onContextMenu={(e) => e.preventDefault()}
           alt={product.name}
+          draggable={false}
           className="w-full h- md:h- object-cover object-center group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
