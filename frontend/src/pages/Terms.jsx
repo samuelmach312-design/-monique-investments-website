@@ -70,7 +70,7 @@ export default function Terms() {
             </p>
             <div className="mt-3 space-y-1">
               <p><strong>Business:</strong> Monique Investments</p>
-              <p><strong>Location:</strong> chuka town, Central Province, Kenya</p>
+              <p><strong>Location:</strong> chuka town, Eastern Province, Kenya</p>
               <p><strong>Phone:</strong> <a href="tel:+254723808067" className="text-gray-900 font-semibold hover:underline">+254 723 808 067</a></p>
               <p><strong>Email:</strong> <a href="mailto:support@monique.co.ke" className="text-gray-900 font-semibold hover:underline">support@monique.co.ke</a></p>
             </div>

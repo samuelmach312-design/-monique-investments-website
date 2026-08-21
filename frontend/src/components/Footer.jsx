@@ -14,7 +14,7 @@ export default function Footer() {
 
           <div>
             <h4 className="font-semibold text-white mb-4">Contact</h4>
-            <p className="text-sm text-gray-400">Kangema, Central Province, KE</p>
+            <p className="text-sm text-gray-400">Chuka town, Eastern Province, KE</p>
             <p className="text-sm text-gray-400 mt-2">
               <a href="mailto:support@monique.co.ke" className="hover:text-white transition-colors">
                 support@monique.co.ke

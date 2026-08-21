@@ -16,7 +16,7 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">Location</h3>
-                <p className="text-gray-600">chuka town, Central Province</p>
+                <p className="text-gray-600">chuka town, Eastern Province</p>
                 <p className="text-gray-600">Kenya</p>
               </div>
             </div>
