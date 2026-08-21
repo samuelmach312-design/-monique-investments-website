@@ -40,8 +40,8 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                <a href="mailto:support@monique.co.ke" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  support@monique.co.ke
+                <a href="mailto:mwangare80@gmail.com" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  mwangare80@gmail.com
                 </a>
                 <p className="text-sm text-gray-500 mt-1">We reply within 24 hours</p>
               </div>

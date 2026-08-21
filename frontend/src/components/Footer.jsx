@@ -16,8 +16,8 @@ export default function Footer() {
             <h4 className="font-semibold text-white mb-4">Contact</h4>
             <p className="text-sm text-gray-400">Chuka town, Eastern Province, KE</p>
             <p className="text-sm text-gray-400 mt-2">
-              <a href="mailto:support@monique.co.ke" className="hover:text-white transition-colors">
-                support@monique.co.ke
+              <a href="mailto:mwangare80@gmail.com" className="hover:text-white transition-colors">
+                mwangare80@gmail.com
               </a>
             </p>
             <p className="text-sm text-gray-400 mt-2">

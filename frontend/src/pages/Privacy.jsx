@@ -67,7 +67,7 @@ export default function Privacy() {
             <div className="mt-3 space-y-1">
               <p><strong>Phone:</strong> +254 723 808 067</p>
               <p><strong>Location:</strong> chuka town, Eastern Province, Kenya</p>
-              <p><strong>Email:</strong> support@monique.co.ke</p>
+              <p><strong>Email:</strong> mwangare80@gmail.com</p>
             </div>
           </section>
         </div>
