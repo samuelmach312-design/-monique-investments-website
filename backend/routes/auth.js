@@ -1,100 +1,99 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
+const nodemailer = require('nodemailer')
+const jwt = require('jsonwebtoken')
+const User = require('../models/User') // <-- CHECK THIS PATH! Is it ../models/User or ./models/User ?
+const bcrypt = require('bcryptjs')
 
-// Temporary in-memory users - replace with DB later
-const users = [
-  { id: 1, name: 'Test User', email: 'test@test.com', password: '123456' }
-];
-
-router.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  
-  if (!email || !password) {
-    return res.status(400).json({ 
-      success: false, 
-      error: 'Email and password required' 
-    });
+// Transporter using YOUR env names
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
   }
+})
 
-  const user = users.find(u => u.email === email && u.password === password);
-  
-  if (!user) {
-    return res.status(401).json({ 
-      success: false, 
-      error: 'Invalid email or password' 
-    });
+// Verify transporter
+transporter.verify((error, success) => {
+  if (error) {
+    console.log("SMTP ERROR:", error)
+  } else {
+    console.log("SMTP Ready to send emails")
   }
+})
 
-  const { password: _, ...userWithoutPassword } = user;
-  
-  res.json({ 
-    success: true, 
-    user: userWithoutPassword,
-    token: 'fake-jwt-token-' + user.id
-  });
-});
+// FORGOT PASSWORD - THIS WAS 404 BEFORE
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body
+    console.log("Forgot request for:", email)
+    
+    const user = await User.findOne({ email })
+    if (!user) {
+      console.log("User not found:", email)
+      return res.json({ message: "If this email exists, a reset link was sent to your inbox" })
+    }
 
-router.post('/signup', (req, res) => {
-  const { name, email, password } = req.body;
-  
-  if (!name || !email || !password) {
-    return res.status(400).json({ 
-      success: false, 
-      error: 'All fields required' 
-    });
+    const resetToken = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    )
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173'
+    const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`
+
+    console.log("RESET LINK:", resetLink)
+
+    await transporter.sendMail({
+      from: `"Monique Investments" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: "Reset Your Password - Monique Investments",
+      html: `
+        <div style="font-family: Arial; max-width:600px; margin:auto; border:1px solid #eee; border-radius:16px; padding:24px;">
+          <h2 style="color:#0f172a;">Reset Password</h2>
+          <p>Hi ${user.name || ''}, you requested a password reset.</p>
+          <a href="${resetLink}" style="display:inline-block; background:#0f172a; color:white; padding:12px 24px; border-radius:9999px; text-decoration:none; font-weight:bold;">Reset Password</a>
+          <p style="color:#666; font-size:12px; margin-top:16px;">Link expires in 1 hour. If you didn't request, ignore.</p>
+          <p style="color:#999; font-size:11px; word-break:break-all;">${resetLink}</p>
+        </div>
+      `
+    })
+
+    console.log("Email sent to:", email)
+
+    res.json({ 
+      message: "If this email exists, a reset link was sent to your inbox",
+      resetLink: resetLink // FOR TESTING - remove in production!
+    })
+
+  } catch (err) {
+    console.error("Forgot error:", err)
+    res.status(500).json({ message: "Failed to send email: " + err.message })
   }
+})
 
-  if (users.find(u => u.email === email)) {
-    return res.status(400).json({ 
-      success: false, 
-      error: 'Email already exists' 
-    });
+// RESET PASSWORD
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, password } = req.body
+    console.log("Reset attempt with token")
+    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const user = await User.findById(decoded.id)
+    if (!user) return res.status(400).json({ message: "Invalid token" })
+    
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10)
+    user.password = hashedPassword
+    await user.save()
+    
+    res.json({ message: "Password reset successful!" })
+  } catch (err) {
+    console.error("Reset error:", err)
+    res.status(400).json({ message: "Invalid or expired token" })
   }
+})
 
-  const newUser = { 
-    id: users.length + 1, 
-    name, 
-    email, 
-    password 
-  };
-  
-  users.push(newUser);
-  
-  const { password: _, ...userWithoutPassword } = newUser;
-  
-  res.status(201).json({ 
-    success: true, 
-    user: userWithoutPassword,
-    token: 'fake-jwt-token-' + newUser.id
-  });
-});
-
-// Forgot Password - NEW
-router.post('/forgot-password', (req, res) => {
-  const { email } = req.body;
-  
-  if (!email) {
-    return res.status(400).json({ success: false, error: 'Email required' });
-  }
-
-  const user = users.find(u => u.email === email);
-  
-  if (!user) {
-    return res.status(404).json({ success: false, error: 'Email not found' });
-  }
-
-  // Reset to 123456
-  user.password = '123456';
-  
-  res.json({ 
-    success: true, 
-    message: 'Password has been reset to 123456. Please login with new password.',
-    resetLink: '/login'
-  });
-});
-
-router.get('/me', (req, res) => {
-  res.json({ success: true, user: null });
-});
-
-module.exports = router;
+module.exports = router
