@@ -10,6 +10,9 @@ export function useAuth() {
   return context
 }
 
+// CHANGE THIS TO YOUR REAL BACKEND URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -30,90 +33,99 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      // Mock login - accept any email/password for testing
-      await new Promise(r => setTimeout(r, 500))
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
 
-      if (!email ||!password) {
-        return { success: false, error: 'Email and password required' }
+      const data = await res.json()
+
+      if (!res.ok) {
+        return { success: false, error: data.message || 'Login failed' }
       }
 
-      const mockUser = {
-        id: Date.now(),
-        name: email.split('@')[0],
-        email
-      }
-
-      const token = 'mock_token_' + Date.now()
-      setUser(mockUser)
-      localStorage.setItem('user', JSON.stringify(mockUser))
-      localStorage.setItem('token', token)
+      setUser(data.user)
+      localStorage.setItem('user', JSON.stringify(data.user))
+      localStorage.setItem('token', data.token)
 
       return { success: true }
     } catch (err) {
-      return {
-        success: false,
-        error: 'Login failed. Please try again.'
-      }
+      console.error(err)
+      return { success: false, error: 'Network error - is backend running on ' + API_URL + '?' }
     }
   }
 
   const signup = async (email, password, name) => {
     try {
-      // Mock signup - accept any details
-      await new Promise(r => setTimeout(r, 500))
+      const res = await fetch(`${API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name })
+      })
 
-      if (!name ||!email ||!password) {
-        return { success: false, error: 'All fields required' }
+      const data = await res.json()
+
+      if (!res.ok) {
+        return { success: false, error: data.message || 'Signup failed' }
       }
 
-      if (password.length < 6) {
-        return { success: false, error: 'Password must be at least 6 characters' }
-      }
-
-      const mockUser = {
-        id: Date.now(),
-        name,
-        email
-      }
-
-      const token = 'mock_token_' + Date.now()
-      setUser(mockUser)
-      localStorage.setItem('user', JSON.stringify(mockUser))
-      localStorage.setItem('token', token)
+      setUser(data.user)
+      localStorage.setItem('user', JSON.stringify(data.user))
+      localStorage.setItem('token', data.token)
 
       return { success: true }
     } catch (err) {
-      return {
-        success: false,
-        error: 'Signup failed. Please try again.'
-      }
+      console.error(err)
+      return { success: false, error: 'Network error' }
     }
   }
 
   const forgotPassword = async (email) => {
-    // Mock - just return success for testing
-    await new Promise(r => setTimeout(r, 500))
+    try {
+      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
 
-    if (!email) {
-      return { success: false, error: 'Email required' }
-    }
+      const data = await res.json()
 
-    return {
-      success: true,
-      message: 'If this email exists, a reset link was sent to your inbox',
-      resetLink: '#mock-reset-link'
+      if (!res.ok) {
+        return { success: false, error: data.message || 'Failed to send email' }
+      }
+
+      console.log('Reset link:', data.resetLink) // will show in console for testing
+      return {
+        success: true,
+        message: data.message,
+        resetLink: data.resetLink
+      }
+    } catch (err) {
+      console.error(err)
+      return { success: false, error: 'Network error - backend not running?' }
     }
   }
 
   const resetPassword = async (token, newPassword) => {
-    // Mock - just return success
-    await new Promise(r => setTimeout(r, 500))
+    try {
+      const res = await fetch(`${API_URL}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, password: newPassword })
+      })
 
-    if (!newPassword || newPassword.length < 6) {
-      return { success: false, error: 'Password must be at least 6 characters' }
+      const data = await res.json()
+
+      if (!res.ok) {
+        return { success: false, error: data.message || 'Reset failed' }
+      }
+
+      return { success: true, message: data.message }
+    } catch (err) {
+      console.error(err)
+      return { success: false, error: 'Network error' }
     }
-
-    return { success: true, message: 'Password reset successful. You can now log in.' }
   }
 
   const logout = () => {

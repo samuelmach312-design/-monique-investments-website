@@ -4,9 +4,11 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const { neon } = require('@neondatabase/serverless');
+const authRoutes = require('./routes/auth')
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
+app.use('/api/auth', authRoutes)
 app.use(express.json());
 
 // Ensure uploads exist - both locations
