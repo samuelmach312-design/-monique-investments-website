@@ -12,6 +12,7 @@ import Terms from './pages/Terms'
 import Contact from './pages/Contact'
 import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Signup from './pages/Signup'
 import OrderSuccess from './pages/OrderSuccess'
 import AdminLayout from './components/AdminLayout';
@@ -37,6 +38,7 @@ function LayoutWrapper() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/admin" element={<AdminLayout />} />
         </Routes>
       </main>
@@ -52,7 +54,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
-          <Preloader />
+          {/* <Preloader /> */}
           <div className="app">
             <LayoutWrapper />
           </div>
