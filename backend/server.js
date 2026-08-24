@@ -4,12 +4,17 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const { neon } = require('@neondatabase/serverless');
-const authRoutes = require('./routes/auth')
 
 const app = express();
+
+// 1. MIDDLEWARE FIRST!
 app.use(cors({ origin: true, credentials: true }));
+app.use(express.json()); // <-- MUST BE BEFORE ROUTES
+app.use(express.urlencoded({ extended: true }));
+
+// 2. ROUTES SECOND!
+const authRoutes = require('./routes/auth')
 app.use('/api/auth', authRoutes)
-app.use(express.json());
 
 // Ensure uploads exist - both locations
 const uploadDir1 = path.join(__dirname, 'uploads');
@@ -30,7 +35,7 @@ app.get('/', (req,res)=> res.json({ status: 'Neon API Running', hasDB: !!sql }))
 // Both routes point to same handler
 async function getProductsHandler(req,res){
   try {
-    if (!sql) return res.json({ success: true, products: [] });
+    if (!sql) return res.json({ success: true, products: []});
     const products = await sql`SELECT * FROM products WHERE in_stock = true ORDER BY id DESC`;
     const formatted = products.map(p => ({
       id: p.id, _id: p.id, name: p.name, brand: p.brand, category: p.category,
@@ -41,7 +46,7 @@ async function getProductsHandler(req,res){
     res.json({ success: true, products: formatted });
   } catch(e) { 
     console.error(e);
-    res.status(500).json({ success: false, error: e.message }); 
+    res.status(500).json({ success: false, error: e.message}); 
   }
 }
 
