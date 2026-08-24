@@ -1,8 +1,30 @@
-﻿export default function App() {
+﻿import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import Home from './pages/Home'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
+import './index.css'
+
+function App() {
   return (
-    <div style={{padding:'50px', background:'white', color:'black', minHeight:'100vh'}}>
-      <h1 style={{fontSize:'40px', color:'#D4AF37'}}>MONIQUE INVESTMENTS - IT WORKS!</h1>
-      <p>Build should be 100+ modules now!</p>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <div className="min-h-screen bg-white flex flex-col">
+          <Header />
+          <main className="flex-1">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
+
+export default App
