@@ -1,59 +1,61 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState('')
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
+  const [email, setEmail] = useState('samuelmach.312@gmail.com')
   const [loading, setLoading] = useState(false)
-  const { forgotPassword } = useAuth()
+  const [result, setResult] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
-    setMessage('')
     setLoading(true)
-    const result = await forgotPassword(email)
-    if (result.success) {
-      setMessage(result.message)
-      if (result.resetLink) {
-        alert(`RESET LINK: ${result.resetLink}`)
-        console.log('Reset link:', result.resetLink)
+    try {
+      const API = import.meta.env.VITE_API_URL || 'https://monique-investments-website.onrender.com/api'
+      const res = await fetch(`${API}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+      const data = await res.json()
+      console.log("FULL RESPONSE:", data)
+      
+      setResult(data)
+      if (data.resetLink) {
+        alert(`RESET LINK:\n${data.resetLink}\n\nCopy this link!`)
+      } else {
+        alert(data.message)
       }
-    } else {
-      setError(result.error)
+    } catch (err) {
+      alert(err.message)
     }
     setLoading(false)
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl border w-full max-w-md">
-        <h2 className="text-2xl font-black text-center">Forgot Password?</h2>
-        <p className="text-sm text-gray-500 text-center mt-1 mb-6">We'll send reset instructions</p>
-
-        {error && <div className="bg-red-50 text-red-700 p-3 rounded-xl mb-4 text-sm">{error}</div>}
-        {message && <div className="bg-green-50 text-green-700 p-3 rounded-xl mb-4 text-sm">{message}</div>}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-4 py-3 bg-gray-50 border rounded-xl"
-            placeholder="you@example.com"
-          />
-          <button type="submit" disabled={loading} className="w-full py-3 bg-black text-white rounded-xl font-bold">
-            {loading ? 'Sending...' : 'Send Reset Link'}
-          </button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <Link to="/login" className="text-sm font-bold text-blue-600">← Back to Login</Link>
-        </div>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow max-w-md w-full">
+        <h2 className="text-2xl font-bold mb-4">Forgot Password?</h2>
+        <p className="text-sm text-gray-600 mb-4">If email exists, reset link sent</p>
+        <input 
+          type="email" 
+          value={email}
+          onChange={e=>setEmail(e.target.value)}
+          className="w-full border p-3 rounded mb-4"
+          placeholder="Email"
+          required
+        />
+        <button disabled={loading} className="w-full bg-black text-white p-3 rounded">
+          {loading ? 'Sending...' : 'Send Reset Link'}
+        </button>
+        
+        {result?.resetLink && (
+          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded break-all">
+            <p className="text-sm font-bold">RESET LINK (copy):</p>
+            <a href={result.resetLink} className="text-blue-600 underline text-sm">{result.resetLink}</a>
+          </div>
+        )}
+        
+        <a href="/login" className="block mt-4 text-center text-sm underline">← Back to Login</a>
+      </form>
     </div>
   )
 }
