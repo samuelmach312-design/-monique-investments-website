@@ -1,66 +1,12 @@
-﻿import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import Header from './components/Header'
-import Footer from './components/Footer'
-// import InstallPrompt from './components/InstallPrompt'
-// import WhatsAppButton from './components/WhatsAppButton'
-// import Preloader from './components/Preloader'
-import Home from './pages/Home'
-import Cart from './pages/Cart'
-import Checkout from './pages/Checkout'
-import Privacy from './pages/Privacy'
-import Terms from './pages/Terms'
-import Contact from './pages/Contact'
-import Login from './pages/Login'
-import ForgotPassword from './pages/ForgotPassword'
-import ResetPassword from './pages/ResetPassword'
-import Signup from './pages/Signup'
-import OrderSuccess from './pages/OrderSuccess'
-import AdminLayout from './components/AdminLayout';
-import { AuthProvider } from './context/AuthContext'
-import { CartProvider } from './context/CartContext'
-import './App.css'
-
-function LayoutWrapper() {
-  const location = useLocation()
-  const isAdmin = location.pathname.startsWith('/admin')
+﻿export default function App() {
   return (
-    <>
-      {!isAdmin && <Header />}
-      <main className={isAdmin ? "" : "main-content"}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/order-success" element={<OrderSuccess />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/admin" element={<AdminLayout />} />
-        </Routes>
-      </main>
-      {!isAdmin && <Footer />}
-      {/* {!isAdmin && <InstallPrompt />} */}
-      {/* {!isAdmin && <WhatsAppButton />} */}
-    </>
+    <div style={{padding: '50px', background: 'white', color: 'black', minHeight: '100vh', fontFamily: 'Arial'}}>
+      <h1 style={{fontSize: '40px', color: '#D4AF37', fontWeight: 'bold'}}>MONIQUE INVESTMENTS - IT WORKS!</h1>
+      <p style={{fontSize: '20px'}}>White screen fixed! Build was 1 module, now should be 100+ modules.</p>
+      <p>Your logo:</p>
+      <img src="/monique-logo-192.png" style={{width: '192px', height: '192px'}} alt="logo"/>
+      <br/><br/>
+      <a href="/forgot-password" style={{color: 'blue', fontSize: '18px'}}>Test Forgot Password Link</a>
+    </div>
   )
 }
-
-function App() {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <div className="app">
-            <LayoutWrapper />
-          </div>
-        </CartProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  )
-}
-
-export default App
