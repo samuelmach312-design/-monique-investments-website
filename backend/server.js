@@ -8,12 +8,12 @@ const { checkAdmin } = require('./middleware/auth');
 
 const app = express();
 
-// 1. MIDDLEWARE FIRST!
+// 1. MIDDLEWARE
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Ensure uploads exist - both locations
+// Uploads
 const uploadDir1 = path.join(__dirname, 'uploads');
 const uploadDir2 = path.join(__dirname, 'public/uploads');
 if (!fs.existsSync(uploadDir1)) fs.mkdirSync(uploadDir1, { recursive: true });
@@ -22,18 +22,17 @@ if (!fs.existsSync(uploadDir2)) fs.mkdirSync(uploadDir2, { recursive: true });
 app.use('/uploads', express.static(uploadDir1));
 app.use('/uploads', express.static(uploadDir2));
 app.use('/images', express.static(uploadDir1));
-app.use('/images', express.static(uploadDir2));
 app.use('/public/uploads', express.static(uploadDir2));
 
 const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
 
-app.get('/', (req,res)=> res.json({ 
+// --- API HEALTH CHECK (move to /api so it doesn't block frontend) ---
+app.get('/api', (req,res)=> res.json({ 
   status: 'Monique Neon API Running', 
   hasDB: !!sql,
   admins: ['Samuel - 0706631292', 'Monicah - 0723808067']
 }));
 
-// PUBLIC GET HANDLER - Store can see products without login
 async function getProductsHandler(req,res){
   try {
     if (!sql) return res.json({ success: true, products: []});
@@ -51,20 +50,40 @@ async function getProductsHandler(req,res){
   }
 }
 
-// 2. PUBLIC GET ROUTES - No auth needed for customers
+// PUBLIC GET
 app.get('/api/products', getProductsHandler);
 app.get('/api/mongo-products', getProductsHandler);
 
-// 3. AUTH ROUTES
+// AUTH ROUTES
 const authRoutes = require('./routes/auth')
 app.use('/api/auth', authRoutes)
 
-// 4. PROTECTED WRITE ROUTES - Only Samuel & Monicah
+// PROTECTED WRITE ROUTES
 const productsRouter = require('./routes/products');
-
-// Apply auth middleware to all write operations
 app.use('/api/products', checkAdmin, productsRouter);
 app.use('/api/mongo-products', checkAdmin, productsRouter);
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, ()=> console.log(`🚀 Monique Server on port ${PORT}, DB: ${!!sql}, Admins: Samuel & Monicah secured`));
+// --- 2. SERVE FRONTEND (THIS FIXES YOUR 404) ---
+// Vite builds to 'dist', CRA builds to 'build' - we check both
+const distPath = path.join(__dirname, 'dist');
+const buildPath = path.join(__dirname, 'build');
+const frontendPath = fs.existsSync(distPath) ? distPath : buildPath;
+
+if (fs.existsSync(frontendPath)) {
+  app.use(express.static(frontendPath));
+  console.log(`✅ Serving frontend from ${frontendPath}`);
+  
+  // For any route not starting with /api, serve React app (fixes /admin, /cart, etc)
+  app.get('*', (req, res) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+} else {
+  console.log('⚠️ No frontend build found at dist/ or build/');
+  app.get('/', (req,res)=> res.json({ status: 'API only - frontend not built' }));
+}
+
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, ()=> console.log(`🚀 Monique Server on ${PORT}, DB: ${!!sql}, Frontend: ${fs.existsSync(frontendPath)}`));
