@@ -15,7 +15,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import Signup from './pages/Signup'
 import OrderSuccess from './pages/OrderSuccess'
-import AdminLayout from './components/Adminlayout';
+import AdminLayout from './components/AdminLayout';
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import './App.css'
