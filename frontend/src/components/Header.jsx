@@ -3,27 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { ShoppingCart, Menu, X, Search, Download } from 'lucide-react'
+import { usePWAInstall } from '../hooks/usePWAInstall'
 
 export default function Header() {
-  const [deferredPrompt, setDeferredPrompt] = useState(null)
-
-  useEffect(() => {
-     const handler = (e) => {
-      e.preventDefault()
-      setDeferredPrompt(e)
-    }
-    window.addEventListener('beforeinstallprompt', handler)
-    return () => window.removeEventListener('beforeinstallprompt', handler)
-  }, [])
-
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) return
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-    if (outcome === 'accepted') {
-      setDeferredPrompt(null)
-    }
-  }
+  const { canInstall, install, isInstalled } = usePWAInstall()
 
   const { cart } = useCart()
   const { user, logout } = useAuth()
@@ -141,8 +124,8 @@ export default function Header() {
               </Link>
               {user? (<button onClick={handleLogout} className="text-sm font-medium text-gray-500 hover:text-red-600">Logout</button>) : (<Link to="/login" className="px-4 py-2 bg-gray-900 text-white text-sm font-bold rounded-full hover:bg-black">Login</Link>)}
 
-              {deferredPrompt && (
-                <button onClick={handleInstallClick} className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-full text-sm font-bold hover:bg-blue-700 transition-all">
+              {canInstall &&!isInstalled && (
+                <button onClick={install} className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-full text-sm font-bold hover:bg-blue-700 transition-all animate-pulse">
                   <Download size={16} /> Install
                 </button>
               )}
@@ -189,10 +172,10 @@ export default function Header() {
 
               <Link to="/cart" onClick={() => setMobileMenu(false)} className="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-white border border-gray-200 text-gray-900 font-bold text-sm hover:border-gray-300 hover:bg-gray-50 transition-colors"><span className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center"><ShoppingCart size={16} /></span>Cart{totalItems > 0 && <span className="ml-auto bg-blue-600 text-white text-xs px-2.5 py-1 rounded-full font-bold">{totalItems}</span>}</Link>
 
-              {deferredPrompt && (
-                <button onClick={() => { handleInstallClick(); setMobileMenu(false); }} className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-blue-600 text-white font-bold text-sm shadow-lg hover:bg-blue-700 transition-colors">
+              {canInstall &&!isInstalled && (
+                <button onClick={() => { install(); setMobileMenu(false); }} className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-blue-600 text-white font-bold text-sm shadow-lg hover:bg-blue-700 transition-colors animate-pulse">
                   <span className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center"><Download size={16} /></span>
-                  Install App
+                  Install App - Real App
                   <span className="ml-auto text-xs bg-white/20 px-2 py-1 rounded-full">FREE</span>
                 </button>
               )}
