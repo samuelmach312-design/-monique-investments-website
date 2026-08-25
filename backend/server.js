@@ -4,17 +4,14 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const { neon } = require('@neondatabase/serverless');
+const { checkAdmin } = require('./middleware/auth');
 
 const app = express();
 
 // 1. MIDDLEWARE FIRST!
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json()); // <-- MUST BE BEFORE ROUTES
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// 2. ROUTES SECOND!
-const authRoutes = require('./routes/auth')
-app.use('/api/auth', authRoutes)
 
 // Ensure uploads exist - both locations
 const uploadDir1 = path.join(__dirname, 'uploads');
@@ -30,9 +27,13 @@ app.use('/public/uploads', express.static(uploadDir2));
 
 const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
 
-app.get('/', (req,res)=> res.json({ status: 'Neon API Running', hasDB: !!sql }));
+app.get('/', (req,res)=> res.json({ 
+  status: 'Monique Neon API Running', 
+  hasDB: !!sql,
+  admins: ['Samuel - 0706631292', 'Monicah - 0723808067']
+}));
 
-// Both routes point to same handler
+// PUBLIC GET HANDLER - Store can see products without login
 async function getProductsHandler(req,res){
   try {
     if (!sql) return res.json({ success: true, products: []});
@@ -41,7 +42,7 @@ async function getProductsHandler(req,res){
       id: p.id, _id: p.id, name: p.name, brand: p.brand, category: p.category,
       price: Number(p.price), sellingPrice: Number(p.price), 
       sizes: '40-45', size: '40-45', stock: 50, in_stock: true,
-      image: p.image_url, image_url: p.image_url, description: p.name || p.description
+      image: p.image_url, image_url: p.image_url, description: p.description || p.name
     }));
     res.json({ success: true, products: formatted });
   } catch(e) { 
@@ -50,13 +51,20 @@ async function getProductsHandler(req,res){
   }
 }
 
+// 2. PUBLIC GET ROUTES - No auth needed for customers
 app.get('/api/products', getProductsHandler);
 app.get('/api/mongo-products', getProductsHandler);
 
-// Use the full products router for POST/PUT/DELETE with uploads
+// 3. AUTH ROUTES
+const authRoutes = require('./routes/auth')
+app.use('/api/auth', authRoutes)
+
+// 4. PROTECTED WRITE ROUTES - Only Samuel & Monicah
 const productsRouter = require('./routes/products');
-app.use('/api/products', productsRouter);
-app.use('/api/mongo-products', productsRouter);
+
+// Apply auth middleware to all write operations
+app.use('/api/products', checkAdmin, productsRouter);
+app.use('/api/mongo-products', checkAdmin, productsRouter);
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, ()=> console.log(`🚀 Server on port ${PORT}, DB: ${!!sql}`));
+app.listen(PORT, ()=> console.log(`🚀 Monique Server on port ${PORT}, DB: ${!!sql}, Admins: Samuel & Monicah secured`));
