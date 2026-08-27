@@ -36,7 +36,7 @@ export default function ProductCard({ product }) {
           loading="lazy"
           draggable={false}
           onError={(e)=>{ e.target.onerror=null; e.target.src=FALLBACK; }}
-          className="max-w-[85%] max-h-[85%] w-auto h-auto object-contain object-center group-hover:scale-[1.02] transition-transform duration-200"
+          className="max-w-[78%] max-h-[78%] w-auto h-auto object-contain object-center group-hover:scale-[1.02] transition-transform duration-200"
         />
         {/* Jumia style discount badge - top right orange */}
         <div className="absolute top-2 right-2 bg-[#feefde] text-[#f68b1e] text-[11px] font-bold px-1.5 py-0.5 rounded">
