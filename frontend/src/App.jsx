@@ -15,7 +15,6 @@ import ResetPassword from './pages/ResetPassword'
 import Signup from './pages/Signup'
 import OrderSuccess from './pages/OrderSuccess'
 import AdminLayout from './components/AdminLayout'
-import Seed114 from './pages/Seed114'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 
@@ -40,7 +39,6 @@ function LayoutWrapper() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/admin" element={<AdminLayout />} />
-          <Route path="/seed-114" element={<Seed114 />} />
         </Routes>
       </main>
       {!isAdmin && <Footer />}
