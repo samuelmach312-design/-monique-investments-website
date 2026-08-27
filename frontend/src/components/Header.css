@@ -140,6 +140,19 @@
   cursor: pointer;
   color: #111827;
 }
+.install-menu-btn {
+  background: #000;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+.install-menu-btn:hover {
+  background: #222;
+}
 
 @media (min-width: 768px) {
  .header-menu-btn {

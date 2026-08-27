@@ -3,7 +3,6 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import InstallPrompt from './components/InstallPrompt'
 import WhatsAppButton from './components/WhatsAppButton'
-import Preloader from './components/Preloader'
 import Home from './pages/Home'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
@@ -15,18 +14,18 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import Signup from './pages/Signup'
 import OrderSuccess from './pages/OrderSuccess'
-import AdminLayout from './components/AdminLayout';
+import AdminLayout from './components/AdminLayout'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
-import './App.css'
 
 function LayoutWrapper() {
   const location = useLocation()
   const isAdmin = location.pathname.startsWith('/admin')
+  
   return (
     <>
       {!isAdmin && <Header />}
-      <main className={isAdmin ? "" : "main-content"}>
+      <main className={isAdmin ? "min-h-screen" : "main-content"}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
@@ -49,12 +48,11 @@ function LayoutWrapper() {
   )
 }
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
-          {/* <Preloader /> */}
           <div className="app">
             <LayoutWrapper />
           </div>
@@ -63,5 +61,3 @@ function App() {
     </BrowserRouter>
   )
 }
-
-export default App
