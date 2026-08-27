@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useCart } from '../context/CartContext'
 import { Link } from 'react-router-dom'
 
+const FALLBACK = '/images/monique-logo.png';
+
 export default function ProductCard({ product }) {
   const { addToCart } = useCart()
   const [isAdding, setIsAdding] = useState(false)
@@ -19,18 +21,17 @@ export default function ProductCard({ product }) {
     setTimeout(() => setIsAdded(false), 2000)
   }
 
-  const img = product.image_url || product.image || 'https://via.placeholder.com/400/f8fafc/9ca3af?text=M';
+  const img = product.image_url || product.image || FALLBACK;
 
   return (
     <div className="group bg-white rounded-[1.6rem] border border-gray-100 overflow-hidden hover:border-gray-200 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
-      {/* FIXED IMAGE - contained, padded, not enlarged */}
       <Link to={`/product/${product.id || product._id}`} className="relative bg-[#f8fafc] aspect-square p-5 flex items-center justify-center overflow-hidden">
         <img
           src={img}
           alt={product.name}
           draggable={false}
           onContextMenu={e=>e.preventDefault()}
-          onError={e=>e.target.src='https://via.placeholder.com/400/f8fafc/9ca3af?text=M'}
+          onError={(e)=>{ e.target.onerror=null; e.target.src=FALLBACK; }}
           className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
@@ -38,14 +39,11 @@ export default function ProductCard({ product }) {
           {product.brand || 'Monique'}
         </div>
         {isAdded && (
-          <div className="absolute inset-0 bg-green-500/90 backdrop-blur-sm flex items-center justify-center">
-            <div className="bg-white rounded-full p-3 shadow-xl animate-bounce">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
-            </div>
+          <div className="absolute inset-0 bg-green-500/90 flex items-center justify-center">
+            <div className="bg-white rounded-full p-3 shadow-xl">✓</div>
           </div>
         )}
       </Link>
-
       <div className="p-4 flex flex-col flex-1 gap-2">
         <Link to={`/product/${product.id || product._id}`}>
           <h3 className="text- font-bold text-gray-900 leading-[1.35] line-clamp-2 min-h- hover:text-blue-600 transition-colors">
@@ -57,12 +55,8 @@ export default function ProductCard({ product }) {
             <p className="text- font-extrabold text-gray-900">KES {Number(product.price).toLocaleString()}</p>
             <p className="text- text-gray-400 line-through">KES {(Number(product.price)*1.3).toFixed(0)}</p>
           </div>
-          <button
-            onClick={handleAddToCart}
-            disabled={isAdding || isAdded}
-            className={`min-w- h-9 rounded-full text- font-black tracking-wide transition-all flex items-center justify-center gap-1.5 ${isAdded?'bg-green-600 text-white':isAdding?'bg-gray-800 text-white':'bg-[#0f172a] text-white hover:bg-black hover:shadow-lg active:scale-95'}`}
-          >
-            {isAdding? <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : isAdded? 'Added ✓' : '+ Add'}
+          <button onClick={handleAddToCart} disabled={isAdding || isAdded} className={`min-w- h-9 rounded-full text- font-black flex items-center justify-center gap-1 ${isAdded?'bg-green-600 text-white':isAdding?'bg-gray-800 text-white':'bg-[#0f172a] text-white hover:bg-black active:scale-95'}`}>
+            {isAdding? '...' : isAdded? 'Added ✓' : '+ Add'}
           </button>
         </div>
       </div>
