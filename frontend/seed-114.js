@@ -1,148 +1,98 @@
-const API = 'https://monique-backend-api.onrender.com/api/mongo-products';
+import React, { useState } from 'react'
 
-const HARDCODED_114 = [
-  { name: "Grey Casual Brogue Sneakers", price: 3500, category: "Lifestyle", brand: "Monique", image: "/images/grey-casual-sneakers.jpg" },
-  { name: "Grey Suede High-Top Sneakers", price: 3500, category: "Lifestyle", brand: "Monique", image: "/images/grey-suede-high-top-sneakers.jpg" },
-  { name: "Grey Leather Ankle Boots", price: 5000, category: "Boots", brand: "Monique", image: "/images/grey-leather-ankle-boots.jpg" },
-  { name: "Adidas Megashox Black White", price: 4000, category: "Shoes", brand: "Adidas", image: "/images/adidas-megashox-black-white.jpg" },
-  { name: "Adidas Megashox Charcoal Black", price: 4000, category: "Shoes", brand: "Adidas", image: "/images/adidas-megashox-charcoal-black.jpg" },
-  { name: "Black Leather Brogue Shoes", price: 5000, category: "Shoes", brand: "Monique", image: "/images/black-leather-brogue-shoes.jpg" },
-  { name: "Canvas Combat Boots Green", price: 3800, category: "Boots", brand: "Monique", image: "/images/canvas-combat-boots-green.jpg" },
-  { name: "Canvas Combat Boots Tan", price: 3800, category: "Boots", brand: "Monique", image: "/images/canvas-combat-boots-tan.jpg" },
-  { name: "Versace Style Sneaker Black Teal", price: 3500, category: "Lifestyle", brand: "Monique", image: "/images/versace-style-sneaker-black-teal.jpg" },
-  { name: "Delta Tactical Boots Tan", price: 5000, category: "Boots", brand: "Monique", image: "/images/delta-tactical-boots-tan.jpg" },
-  { name: "Designer Sneakers Navy", price: 3500, category: "Shoes", brand: "Monique", image: "/images/designer-sneakers-navy.jpg" },
-  { name: "Designer Sneakers White", price: 3500, category: "Shoes", brand: "Monique", image: "/images/designer-sneakers-white.jpg" },
-  { name: "Hiking Shoes AX4 Black", price: 3500, category: "Shoes", brand: "Monique", image: "/images/hiking-shoes-ax4-black.jpg" },
-  { name: "Hiking Shoes AX4 Grey", price: 3500, category: "Shoes", brand: "Monique", image: "/images/hiking-shoes-ax4-grey.jpg" },
-  { name: "Hiking Shoes AX4 Navy", price: 3500, category: "Shoes", brand: "Monique", image: "/images/hiking-shoes-ax4-navy.jpg" },
-  { name: "Nike Air Force 1 White", price: 2500, category: "Shoes", brand: "Nike", image: "/images/nike-air-force-1-white.jpg" },
-  { name: "Nike Air Max 90 Black Volt", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-air-max-90-black-volt.jpg" },
-  { name: "Nike Air Max 90 Cordura Grey", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-air-max-90-cordura-grey.jpg" },
-  { name: "Work Boots Brown Cat", price: 5000, category: "Boots", brand: "CAT", image: "/images/work-boots-brown-cat.jpg" },
-  { name: "Work Boots Grey Cat", price: 5000, category: "Boots", brand: "CAT", image: "/images/work-boots-grey-cat.jpg" },
-  { name: "Tactical Combat Boots Beige", price: 5000, category: "Boots", brand: "Monique", image: "/images/tactical-combat-boots-beige.jpg" },
-  { name: "Tan Leather Chukka Boots", price: 5000, category: "Boots", brand: "Monique", image: "/images/tan-leather-chukka-boots.jpg" },
-  { name: "Running Sneakers Grey Brown", price: 3000, category: "Shoes", brand: "Monique", image: "/images/running-sneakers-grey-brown.jpg" },
-  { name: "Versace Style Sneaker Black White", price: 3500, category: "Lifestyle", brand: "Monique", image: "/images/versace-style-sneaker-black-white.jpg" },
-  { name: "Motorsport Sneakers Black Red", price: 4000, category: "Lifestyle", brand: "Monique", image: "/images/motorsport-sneakers-black-red.jpg" },
-  { name: "Motorsport Sneakers Black White", price: 4000, category: "Lifestyle", brand: "Monique", image: "/images/motorsport-sneakers-black-white.jpg" },
-  { name: "Naked Wolfe Slider Black White", price: 3500, category: "Slides", brand: "Monique", image: "/images/naked-wolfe-slider-black-white.jpg" },
-  { name: "Naked Wolfe Slider Triple Black", price: 3500, category: "Slides", brand: "Monique", image: "/images/naked-wolfe-slider-triple-black.jpg" },
-  { name: "Braided Belt Brown", price: 800, category: "Accessories", brand: "Monique", image: "/images/braided-belt-brown.jpg" },
-  { name: "Canvas Belt Tan", price: 1000, category: "Accessories", brand: "Monique", image: "/images/canvas-belt-tan.jpg" },
-  { name: "Leather Belt Black", price: 1200, category: "Accessories", brand: "Monique", image: "/images/leather-belt-black.jpg" },
-  { name: "Elastic Shoe Laces", price: 200, category: "Accessories", brand: "Monique", image: "/images/elastic-shoe-laces.jpg" },
-  { name: "Jordan & Dunk Replacement Laces", price: 100, category: "Accessories", brand: "Monique", image: "/images/jordan-and-dunk-replacement-shoe-laces.jpg" },
-  { name: "Thick Rope Shoe Laces", price: 150, category: "Accessories", brand: "Monique", image: "/images/thick-rope-shoe-laces.jpg" },
-  { name: "Shoe Foam Cleaner", price: 400, category: "Shoe Care", brand: "Monique", image: "/images/shoe-foam-cleaner.jpg" },
-  { name: "Shoe Horn", price: 400, category: "Shoe Care", brand: "Monique", image: "/images/shoe-horn.jpg" },
-  { name: "Handtowels", price: 200, category: "Shoe Care", brand: "Monique", image: "/images/handtowels.jpg" },
-  { name: "Adidas Samba Black White", price: 3500, category: "Shoes", brand: "Adidas", image: "/images/samba.jpg" },
-  { name: "Nike Air Force 1 Undefeated Beige Navy", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-undefeated-beige.jpg" },
-  { name: "Nike Air Force 1 White Burgundy", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-white-burgundy.jpg" },
-  { name: "Nike Air Max 90 Surplus Grey", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-air-max-90-grey-surplus.jpg" },
-  { name: "Jordan 1 Low Travis Olive Brown", price: 4000, category: "Shoes", brand: "Jordan", image: "/images/jordan-1-low-travis-olive.jpg" },
-  { name: "Nike Air Max Plus TN Black Volt", price: 4000, category: "Shoes", brand: "Nike", image: "/images/nike-tn-black-volt.jpg" },
-  { name: "Nike Air Max Plus TN Black Blue", price: 4000, category: "Shoes", brand: "Nike", image: "/images/nike-tn-black-blue.jpg" },
-  { name: "Converse All Star Low Brown Leather", price: 3500, category: "Shoes", brand: "Converse", image: "/images/converse-low-brown-leather.jpg" },
-  { name: "Nike Air Force 1 Triple Black", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-triple-black.jpg" },
-  { name: "Converse Low Snakeskin Black", price: 2500, category: "Shoes", brand: "Converse", image: "/images/converse-low-snakeskin-black.jpg" },
-  { name: "Converse Low Snakeskin Maroon", price: 2500, category: "Shoes", brand: "Converse", image: "/images/converse-low-snakeskin-maroon.jpg" },
-  { name: "Nike AF1 Low x Chrome Hearts Olive White", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-chrome-hearts-olive.jpg" },
-  { name: "Nike AF1 Low White Silver Chrome Swoosh", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-chrome-swoosh-white.jpg" },
-  { name: "Jordan 3 Retro Washed Denim Pink", price: 4500, category: "Shoes", brand: "Jordan", image: "/images/jordan-3-washed-denim-pink.jpg" },
-  { name: "Vans Authentic Corduroy Black White", price: 2500, category: "Shoes", brand: "Vans", image: "/images/vans-corduroy-black-white.jpg" },
-  { name: "Vans Authentic Corduroy Triple Black", price: 2500, category: "Shoes", brand: "Vans", image: "/images/vans-corduroy-triple-black.jpg" },
-  { name: "Nike AF1 Low Pink Beige Gold Charm", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-pink-beige-gold.jpg" },
-  { name: "Vans Authentic Corduroy Navy White", price: 2500, category: "Shoes", brand: "Vans", image: "/images/vans-corduroy-navy-white.jpg" },
-  { name: "Vans Authentic Corduroy Grey White", price: 2500, category: "Shoes", brand: "Vans", image: "/images/vans-corduroy-grey-white.jpg" },
-  { name: "Vans Authentic Corduroy Black Grey Two-Tone", price: 2500, category: "Shoes", brand: "Vans", image: "/images/vans-corduroy-black-grey.jpg" },
-  { name: "Nike AF1 Low Wheat Mocha Black", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-wheat-mocha.jpg" },
-  { name: "Nike AF1 Low Wheat Mocha Black", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-wheat-black-2.jpg" },
-  { name: "Nike AF1 Low x Supreme Gucci White Green", price: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-supreme-gucci-green.jpg" },
-  { name: "New Balance 530 White Silver Navy", price: 3000, category: "Shoes", brand: "New Balance", image: "/images/nb-530-white-navy.jpg" },
-  { name: "Nike Air Max 90 Surplus Desert Beige", price: 4000, category: "Shoes", brand: "Nike", image: "/images/airmax-90-surplus-beige.jpg" },
-  { name: "Nike Air Max 90 Surplus Cargo Khaki Volt", price: 4000, category: "Shoes", brand: "Nike", image: "/images/airmax-90-surplus-khaki.jpg" },
-  { name: "Nike Air Max 90 Beige Black Orange", price: 4000, category: "Shoes", brand: "Nike", image: "/images/airmax-90-beige-black-orange.jpg" },
-  { name: "New Balance 530 White Black ABZORB", price: 3500, category: "Shoes", brand: "New Balance", image: "/images/nb-530-white-black.jpg" },
-  { name: "Adidas Samba XLG Platform White Black Gum", price: 3500, category: "Shoes", brand: "Adidas", image: "/images/adidas-samba-xlg-platform.jpg" },
-  { name: "B Logo Black Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/b-logo-black.jpg" },
-  { name: "B Logo Dark Grey Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/b-logo-dark-grey.jpg" },
-  { name: "B Logo Light Grey Tan Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/b-logo-light-grey-tan.jpg" },
-  { name: "Black Floral Velvet Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/black-floral-velvet.jpg" },
-  { name: "Brown Marble Crew Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/brown-marble-crew.jpg" },
-  { name: "Charcoal Zip Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/charcoal-zip.jpg" },
-  { name: "Cream Zip Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/cream-zip.jpg" },
-  { name: "Light Grey Zip Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/light-grey-zip.jpg" },
-  { name: "Navy Zip Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/navy-zip.jpg" },
-  { name: "Off White Zip Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/off-white-zip.jpg" },
-  { name: "Black White Striped Polo Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/polo-striped-bw.jpg" },
-  { name: "Cream Quarter-Zip Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/quarter-cream-lolo.jpg" },
-  { name: "White Quarter-Zip Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/quarter-white-minimal.jpg" },
-  { name: "Sage Green Quarter-Zip Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/quarter-sage.jpg" },
-  { name: "Heather Light Grey Quarter-Zip", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/quarter-heather-light.jpg" },
-  { name: "Grey Undefeated Quarter-Zip", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/quarter-grey-undef.jpg" },
-  { name: "Beige 3-Line Quarter-Zip Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/quarter-beige-line.jpg" },
-  { name: "Cream Undefeated Quarter-Zip", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/quarter-cream-undef.jpg" },
-  { name: "Black Oversized Hoodie", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/hoodie-black.jpg" },
-  { name: "Cream Oversized Hoodie", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/hoodie-cream.jpg" },
-  { name: "Navy Pullover Hoodie", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/navy-pullover-hoodie.jpg" },
-  { name: "Grey Pullover Hoodie", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/grey-pullover-hoodie.jpg" },
-  { name: "Navy Zip-Up Hoodie", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/navy-zip-hoodie.jpg" },
-  { name: "Grey Zip-Up Hoodie", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/grey-zip-hoodie.jpg" },
-  { name: "Cream Zip-Up Hoodie", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/cream-zip-hoodie.jpg" },
-  { name: "Light Heather Zip Hoodie", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/light-heather-zip-hoodie.jpg" },
-  { name: "Charcoal Zip-Up Hoodie", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/charcoal-zip-hoodie.jpg" },
-  { name: "Olive Paint Splatter Quarter-Zip", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/olive-paint-quarter.jpg" },
-  { name: "Milano Grey Zip Knit Cardigan", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/milano-grey-zip-knit.jpg" },
-  { name: "White Cable Knit Sweater", price: 2000, category: "Hoods", brand: "Monique", image: "/images/sweaters/white-cable-knit.jpg" },
-  { name: "Black Polo Shirt Triangle Logo", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-black-triangle.jpg" },
-  { name: "Sage Green Polo Triangle Logo", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-sage-triangle.jpg" },
-  { name: "Dark Grey Polo Triangle Logo", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-darkgrey-triangle.jpg" },
-  { name: "White Striped Polo With Pocket", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-white-striped-pocket.jpg" },
-  { name: "White Brown Color Block Polo", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-white-brown-block.jpg" },
-  { name: "Orange Grey Color Block Polo", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-orange-grey-block.jpg" },
-  { name: "Navy Blue CK Polo", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-navy-ck.jpg" },
-  { name: "Charcoal Grey CK Polo", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-charcoal-ck.jpg" },
-  { name: "White L Huang J Polo", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-white-lhuang-1.jpg" },
-  { name: "White L Huang J Polo Classic", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-white-lhuang-2.jpg" },
-  { name: "Black Trendsbar Polo Shirt", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-black-trendsbar.jpg" },
-  { name: "Off-White Trendsbar Polo Shirt", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-offwhite-trendsbar.jpg" },
-  { name: "White CK Polo Shirt", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-white-ck-2.jpg" },
-  { name: "Black CK Polo Shirt", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-black-ck-2.jpg" },
-  { name: "Taupe Brown Striped Polo With Pocket", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-taupe-brown-striped.jpg" },
-  { name: "Brown Zip Polo Shirt", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-brown-zip.jpg" },
-  { name: "Grey Zip Polo Shirt", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-grey-zip.jpg" },
-  { name: "Beige Zip Polo Shirt", price: 2000, category: "Polo Shirts", brand: "Monique", image: "/images/sweaters/polo-beige-zip.jpg" }
+const API_BASE = (import.meta.env.VITE_API_URL || 'https://monique-backend.onrender.com/api').replace(/\/$/, '');
+const API = `${API_BASE}/mongo-products`;
+
+const PRODUCTS_114 = [
+  { name: "Grey Casual Brogue Sneakers", sellingPrice: 3500, category: "Lifestyle", brand: "Monique", image: "/images/grey-casual-sneakers.jpg", stock: 50 },
+  { name: "Grey Suede High-Top Sneakers", sellingPrice: 3500, category: "Lifestyle", brand: "Monique", image: "/images/grey-suede-high-top-sneakers.jpg", stock: 50 },
+  { name: "Grey Leather Ankle Boots", sellingPrice: 5000, category: "Boots", brand: "Monique", image: "/images/grey-leather-ankle-boots.jpg", stock: 50 },
+  { name: "Adidas Megashox Black White", sellingPrice: 4000, category: "Shoes", brand: "Adidas", image: "/images/adidas-megashox-black-white.jpg", stock: 50 },
+  { name: "Adidas Megashox Charcoal Black", sellingPrice: 4000, category: "Shoes", brand: "Adidas", image: "/images/adidas-megashox-charcoal-black.jpg", stock: 50 },
+  { name: "Black Leather Brogue Shoes", sellingPrice: 5000, category: "Shoes", brand: "Monique", image: "/images/black-leather-brogue-shoes.jpg", stock: 50 },
+  { name: "Canvas Combat Boots Green", sellingPrice: 3800, category: "Boots", brand: "Monique", image: "/images/canvas-combat-boots-green.jpg", stock: 50 },
+  { name: "Canvas Combat Boots Tan", sellingPrice: 3800, category: "Boots", brand: "Monique", image: "/images/canvas-combat-boots-tan.jpg", stock: 50 },
+  { name: "Versace Style Sneaker Black Teal", sellingPrice: 3500, category: "Lifestyle", brand: "Monique", image: "/images/versace-style-sneaker-black-teal.jpg", stock: 50 },
+  { name: "Delta Tactical Boots Tan", sellingPrice: 5000, category: "Boots", brand: "Monique", image: "/images/delta-tactical-boots-tan.jpg", stock: 50 },
+  { name: "Designer Sneakers Navy", sellingPrice: 3500, category: "Shoes", brand: "Monique", image: "/images/designer-sneakers-navy.jpg", stock: 50 },
+  { name: "Designer Sneakers White", sellingPrice: 3500, category: "Shoes", brand: "Monique", image: "/images/designer-sneakers-white.jpg", stock: 50 },
+  { name: "Hiking Shoes AX4 Black", sellingPrice: 3500, category: "Shoes", brand: "Monique", image: "/images/hiking-shoes-ax4-black.jpg", stock: 50 },
+  { name: "Hiking Shoes AX4 Grey", sellingPrice: 3500, category: "Shoes", brand: "Monique", image: "/images/hiking-shoes-ax4-grey.jpg", stock: 50 },
+  { name: "Hiking Shoes AX4 Navy", sellingPrice: 3500, category: "Shoes", brand: "Monique", image: "/images/hiking-shoes-ax4-navy.jpg", stock: 50 },
+  { name: "Nike Air Force 1 White", sellingPrice: 2500, category: "Shoes", brand: "Nike", image: "/images/nike-air-force-1-white.jpg", stock: 50 },
+  { name: "Nike Air Max 90 Black Volt", sellingPrice: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-air-max-90-black-volt.jpg", stock: 50 },
+  { name: "Nike Air Max 90 Cordura Grey", sellingPrice: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-air-max-90-cordura-grey.jpg", stock: 50 },
+  { name: "Work Boots Brown Cat", sellingPrice: 5000, category: "Boots", brand: "CAT", image: "/images/work-boots-brown-cat.jpg", stock: 50 },
+  { name: "Work Boots Grey Cat", sellingPrice: 5000, category: "Boots", brand: "CAT", image: "/images/work-boots-grey-cat.jpg", stock: 50 },
+  { name: "Tactical Combat Boots Beige", sellingPrice: 5000, category: "Boots", brand: "Monique", image: "/images/tactical-combat-boots-beige.jpg", stock: 50 },
+  { name: "Tan Leather Chukka Boots", sellingPrice: 5000, category: "Boots", brand: "Monique", image: "/images/tan-leather-chukka-boots.jpg", stock: 50 },
+  { name: "Running Sneakers Grey Brown", sellingPrice: 3000, category: "Shoes", brand: "Monique", image: "/images/running-sneakers-grey-brown.jpg", stock: 50 },
+  { name: "Versace Style Sneaker Black White", sellingPrice: 3500, category: "Lifestyle", brand: "Monique", image: "/images/versace-style-sneaker-black-white.jpg", stock: 50 },
+  { name: "Motorsport Sneakers Black Red", sellingPrice: 4000, category: "Lifestyle", brand: "Monique", image: "/images/motorsport-sneakers-black-red.jpg", stock: 50 },
+  { name: "Motorsport Sneakers Black White", sellingPrice: 4000, category: "Lifestyle", brand: "Monique", image: "/images/motorsport-sneakers-black-white.jpg", stock: 50 },
+  { name: "Naked Wolfe Slider Black White", sellingPrice: 3500, category: "Slides", brand: "Monique", image: "/images/naked-wolfe-slider-black-white.jpg", stock: 50 },
+  { name: "Naked Wolfe Slider Triple Black", sellingPrice: 3500, category: "Slides", brand: "Monique", image: "/images/naked-wolfe-slider-triple-black.jpg", stock: 50 },
+  { name: "Braided Belt Brown", sellingPrice: 800, category: "Accessories", brand: "Monique", image: "/images/braided-belt-brown.jpg", stock: 50 },
+  { name: "Canvas Belt Tan", sellingPrice: 1000, category: "Accessories", brand: "Monique", image: "/images/canvas-belt-tan.jpg", stock: 50 },
+  { name: "Leather Belt Black", sellingPrice: 1200, category: "Accessories", brand: "Monique", image: "/images/leather-belt-black.jpg", stock: 50 },
+  { name: "Elastic Shoe Laces", sellingPrice: 200, category: "Accessories", brand: "Monique", image: "/images/elastic-shoe-laces.jpg", stock: 50 },
+  { name: "Jordan & Dunk Replacement Laces", sellingPrice: 100, category: "Accessories", brand: "Monique", image: "/images/jordan-and-dunk-replacement-shoe-laces.jpg", stock: 50 },
+  { name: "Thick Rope Shoe Laces", sellingPrice: 150, category: "Accessories", brand: "Monique", image: "/images/thick-rope-shoe-laces.jpg", stock: 50 },
+  { name: "Shoe Foam Cleaner", sellingPrice: 400, category: "Shoe Care", brand: "Monique", image: "/images/shoe-foam-cleaner.jpg", stock: 50 },
+  { name: "Shoe Horn", sellingPrice: 400, category: "Shoe Care", brand: "Monique", image: "/images/shoe-horn.jpg", stock: 50 },
+  { name: "Handtowels", sellingPrice: 200, category: "Shoe Care", brand: "Monique", image: "/images/handtowels.jpg", stock: 50 },
+  { name: "Adidas Samba Black White", sellingPrice: 3500, category: "Shoes", brand: "Adidas", image: "/images/samba.jpg", stock: 50 },
+  { name: "Nike Air Force 1 Undefeated Beige Navy", sellingPrice: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-undefeated-beige.jpg", stock: 50 },
+  { name: "Nike Air Force 1 White Burgundy", sellingPrice: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-af1-white-burgundy.jpg", stock: 50 },
+  { name: "Nike Air Max 90 Surplus Grey", sellingPrice: 3500, category: "Shoes", brand: "Nike", image: "/images/nike-air-max-90-grey-surplus.jpg", stock: 50 },
+  { name: "Jordan 1 Low Travis Olive Brown", sellingPrice: 4000, category: "Shoes", brand: "Jordan", image: "/images/jordan-1-low-travis-olive.jpg", stock: 50 },
 ];
 
-async function seed() {
-  console.log(`Seeding ${HARDCODED_114.length} products to ${API}...`);
-  let ok = 0, fail = 0;
-  for (let p of HARDCODED_114) {
-    const payload = {
-      name: p.name,
-      brand: p.brand,
-      category: p.category,
-      sellingPrice: p.price,
-      price: p.price,
-      buyingPrice: Math.round(p.price * 0.7),
-      stock: 10,
-      size: "40-45",
-      color: "",
-      image: p.image,
-      image_url: p.image,
-      description: p.name + " - Sizes 40-45"
-    };
-    try {
-      const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      if (r.ok) { ok++; console.log(`✓ [${ok}/${HARDCODED_114.length}] ${p.name}`); }
-      else { fail++; console.log(`x [${fail}] ${p.name} - ${r.status}`); }
-    } catch (e) { fail++; console.log(`x ${p.name} - ${e.message}`); }
-    await new Promise(r => setTimeout(r, 400));
-  }
-  console.log(`DONE! Seeded ${ok} products, ${fail} failed. Total in DB now should be 39 + ${ok} = ${39+ok}`);
-}
+export default function Seed114() {
+  const [log, setLog] = useState([]);
+  const [seeding, setSeeding] = useState(false);
+  const [done, setDone] = useState(0);
 
-seed();
+  const seed = async () => {
+    setSeeding(true);
+    setLog([]);
+    setDone(0);
+    let ok = 0;
+    for (const p of PRODUCTS_114) {
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(p)
+        });
+        if (res.ok) {
+          ok++;
+          setDone(ok);
+          setLog(l => [`✅ ${p.name}`, ...l].slice(0,20));
+        } else {
+          const t = await res.text();
+          setLog(l => [`❌ ${p.name} - ${t.slice(0,80)}`, ...l].slice(0,20));
+        }
+      } catch (e) {
+        setLog(l => [`❌ ${p.name} - ${e.message}`, ...l].slice(0,20));
+      }
+    }
+    setSeeding(false);
+    alert(`Done! Seeded ${ok}/114. Now Admin will show 114.`);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6 max-w-3xl mx-auto">
+      <h1 className="text-2xl font-black">SEED 114 → Mongo</h1>
+      <p className="text-sm text-gray-600 mt-2">This uploads your 114 hardcoded products to Render Mongo so Admin shows 114 not 39.</p>
+      <p className="text-xs mt-1">API: {API}</p>
+      <button onClick={seed} disabled={seeding} className="mt-6 px-6 py-3 bg-black text-white rounded-full font-bold disabled:opacity-50">
+        {seeding ? `Seeding ${done}/114...` : 'SEED 114 → Mongo'}
+      </button>
+      <div className="mt-6 bg-white border rounded-xl p-4 h-96 overflow-auto font-mono text-xs">
+        {log.map((l,i)=><div key={i}>{l}</div>)}
+        {!log.length && <div className="text-gray-400">Logs appear here...</div>}
+      </div>
+    </div>
+  );
+}
