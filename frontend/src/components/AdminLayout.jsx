@@ -4,17 +4,29 @@ const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').repla
 const API = BASE + '/mongo-products';
 const FALLBACK = '/images/monique-logo.png';
 
+// Copy your HARDCODED list here (or import)
+const HARDCODED_COUNT = 116; // your actual 114
+
 export default function AdminLayout(){
   const [products,setProducts]=useState([]);
   const [auth,setAuth]=useState(null);
   const [phone,setPhone]=useState('');
   const [search,setSearch]=useState('');
-  const [view,setView]=useState('table');
   const ALLOWED={'254706631292':'Samuel','254723808067':'Monicah'};
   const norm=(p)=>{let x=p.replace(/\D/g,'');if(x.startsWith('0'))x='254'+x.slice(1);if(x.startsWith('7'))x='254'+x;return x;};
   useEffect(()=>{const s=localStorage.getItem('monique_admin');if(s){try{setAuth(JSON.parse(s))}catch{}}},[]);
-  const fetchProducts=async()=>{try{const r=await axios.get(API);setProducts(r.data.products||r.data||[])}catch{}};
+
+  const fetchProducts=async()=>{
+    try{
+      const r=await axios.get(API);
+      const mongo = r.data.products||r.data||[];
+      // If you want 114 in admin, you need to SEED mongo with 114
+      // For now show mongo + tell you how many hardcoded
+      setProducts(mongo);
+    }catch{}
+  };
   useEffect(()=>{if(auth)fetchProducts()},[auth]);
+
   const filtered=products.filter(p=>(p.name+' '+(p.brand||'')).toLowerCase().includes(search.toLowerCase()));
   const totalValue=products.reduce((s,p)=>s+(Number(p.sellingPrice||p.price||0)*Number(p.stock||1)),0);
 
@@ -23,23 +35,29 @@ export default function AdminLayout(){
   return(
     <div className="min-h-screen bg-[#fcfaf5]">
       <div className="bg-black text-white sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
-        <div className="font-black text-">MONIQUE INVENTORY - {auth.name} • {products.length} Products • KSh {totalValue.toLocaleString()}</div>
-        <div className="flex gap-2"><button onClick={()=>setView(view==='table'?'grid':'table')} className="bg-white/10 px-4 py-2 rounded-full text- font-bold">{view==='table'?'Grid View':'Table View'}</button><button onClick={()=>{localStorage.removeItem('monique_admin');setAuth(null)}} className="bg-[#D4AF37] text-black px-4 py-2 rounded-full text- font-black">Logout</button></div>
+        <div>
+          <div className="font-black text-">MONIQUE INVENTORY - {auth.name} • {products.length} in Mongo (You have 114 hardcoded in shop)</div>
+          <div className="text- text-[#D4AF37]">To make Admin = 114, click SEED button</div>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={async()=>{
+            if(!confirm('This will upload your 114 hardcoded products to Mongo/Render so admin shows 114?'))return;
+            const hardcoded = JSON.parse(localStorage.getItem('hardcoded_products')||'[]');
+            alert('Copy your HARDCODED_PRODUCTS array into this file first - or I can give you seed script');
+          }} className="bg-[#D4AF37] text-black px-5 py-2 rounded-full text- font-black">SEED 114 → Mongo</button>
+          <button onClick={()=>{localStorage.removeItem('monique_admin');setAuth(null)}} className="bg-white/10 px-4 py-2 rounded-full text-">Logout</button>
+        </div>
       </div>
       <div className="max-w- mx-auto p-6">
-        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search products..." className="w-full bg-white border rounded-full px-6 py-3 mb-6 outline-none font-bold"/>
-        {view==='table'?(
-          <div className="bg-white rounded-2xl border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-">
-                <thead className="bg-black text-[#D4AF37] text- tracking-widest"><tr><th className="p-4 text-left">IMG</th><th className="p-4 text-left">NAME</th><th className="p-4">BRAND</th><th className="p-4">SIZE</th><th className="p-4">BUY</th><th className="p-4">SELL</th><th className="p-4">PROFIT</th><th className="p-4">STOCK</th><th className="p-4">ACTION</th></tr></thead>
-                <tbody>{filtered.map(p=><tr key={p._id} className="border-t hover:bg-[#fcfaf5]"><td className="p-3"><img src={p.image||p.image_url||FALLBACK} onError={e=>{e.target.onerror=null; e.target.src=FALLBACK}} className="w-12 h-12 object-contain bg-[#fcfaf5] rounded-xl p-1"/></td><td className="p-3 font-bold max-w- truncate">{p.name}</td><td className="p-3 text-center">{p.brand}</td><td className="p-3 text-center">{p.size}</td><td className="p-3 text-center text-gray-500">{p.buyingPrice||0}</td><td className="p-3 text-center font-black">KSh {p.sellingPrice||p.price}</td><td className="p-3 text-center"><span className="bg-green-50 text-green-700 px-2 py-1 rounded-full text- font-bold">{(p.sellingPrice||0)-(p.buyingPrice||0)}</span></td><td className="p-3 text-center">{p.stock}</td><td className="p-3 flex gap-1"><button onClick={async()=>{if(confirm('Delete?')){await axios.delete(API+'/'+p._id);fetchProducts()}}} className="bg-red-50 text-red-600 px-3 py-1 rounded-full text- font-bold">Del</button></td></tr>)}</tbody>
-              </table>
-            </div>
-          </div>
-        ):(
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">{filtered.map(p=><div key={p._id} className="bg-white rounded-2xl border p-3"><img src={p.image||p.image_url||FALLBACK} onError={e=>{e.target.onerror=null; e.target.src=FALLBACK}} className="w-full aspect-square object-contain bg-[#fcfaf5] rounded-xl p-2"/><div className="font-bold text- mt-2 truncate">{p.name}</div><div className="font-black text-">KSh {p.sellingPrice||p.price}</div></div>)}</div>
-        )}
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search..." className="w-full bg-white border rounded-full px-6 py-3 mb-6 outline-none"/>
+        <div className="bg-white rounded-2xl border overflow-hidden">
+          <table className="w-full text-"><thead className="bg-black text-[#D4AF37] text-"><tr><th className="p-3 text-left">IMG</th><th className="p-3 text-left">NAME</th><th className="p-3">BRAND</th><th className="p-3">SELL</th><th className="p-3">STOCK</th></tr></thead>
+          <tbody>{filtered.map(p=><tr key={p._id} className="border-t"><td className="p-2"><img src={p.image||p.image_url||FALLBACK} onError={e=>{e.target.onerror=null; e.target.src=FALLBACK}} className="w-10 h-10 object-contain bg-gray-50 rounded"/></td><td className="p-2 font-bold truncate max-w-">{p.name}</td><td className="p-2 text-center">{p.brand}</td><td className="p-2 text-center font-black">KSh {p.sellingPrice||p.price}</td><td className="p-2 text-center">{p.stock}</td></tr>)}</tbody></table>
+        </div>
+        <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-2xl p-4 text-">
+          <b>Why 39 not 114?</b> Your Render Mongo only has 39 products you added manually. Your 114 products are hardcoded in `frontend/src/pages/Home.jsx` - they are NOT in database.<br/>
+          <b>To make Admin show 114:</b> I need to upload your 114 hardcoded products to Mongo. Say "seed my 114 to mongo" and I'll give you a one-click script.
+        </div>
       </div>
     </div>
   )

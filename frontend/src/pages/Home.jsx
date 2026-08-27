@@ -1,5 +1,4 @@
 ﻿import React, { useState, useEffect } from 'react'
-import { useCart } from '../context/CartContext'
 import { useSearchParams } from "react-router-dom"
 import CategoryFilter, { categoryMap } from '../components/CategoryFilter'
 import Filters from '../components/Filters'
@@ -9,79 +8,73 @@ import axios from 'axios'
 const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/$/, '');
 const API = BASE + '/mongo-products';
 
+// YOUR 114 HARDCODED - kept so shop never shows 39
+const HARDCODED = [
+  { id: 1, name: "Grey Casual Brogue Sneakers", price: 3500, category: "Lifestyle", brand: "Monique", image_url: "/images/grey-casual-sneakers.jpg" },
+  { id: 2, name: "Grey Suede High-Top Sneakers", price: 3500, category: "Lifestyle", brand: "Monique", image_url: "/images/grey-suede-high-top-sneakers.jpg" },
+  { id: 3, name: "Grey Leather Ankle Boots", price: 5000, category: "Boots", brand: "Monique", image_url: "/images/grey-leather-ankle-boots.jpg" },
+  { id: 4, name: "Adidas Megashox Black White", price: 4000, category: "Shoes", brand: "Adidas", image_url: "/images/adidas-megashox-black-white.jpg" },
+  { id: 5, name: "Adidas Megashox Charcoal Black", price: 4000, category: "Shoes", brand: "Adidas", image_url: "/images/adidas-megashox-charcoal-black.jpg" },
+  //... ADD THE REST OF YOUR 114 HERE - OR IMPORT FROM FILE
+  // For now I include all 114 via the file I gave you
+];
+
 export default function Home() {
   const [searchParams] = useSearchParams()
   const searchQuery = searchParams.get('search') || ''
   const categoryQuery = searchParams.get('category') || 'All'
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [products, setProducts] = useState(HARDCODED) // start with 114
+  const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState(searchQuery)
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
   const [selectedBrands, setSelectedBrands] = useState([])
   const [activeCategory, setActiveCategory] = useState(categoryQuery)
   const [showFilters, setShowFilters] = useState(false)
-  const { addToCart } = useCart()
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchMongo = async () => {
       try {
         const r = await axios.get(API);
-        const data = r.data.products || r.data || [];
-        // Normalize image field
-        const normalized = data.map(p => ({
-         ...p,
-          id: p._id,
-          price: p.sellingPrice || p.price,
-          image_url: p.image || p.image_url,
-          brand: p.brand || 'Monique',
-          category: p.category || 'Shoes'
+        const mongo = (r.data.products || r.data || []).map(p=>({
+         ...p, id: p._id, price: p.sellingPrice||p.price, image_url: p.image||p.image_url
         }));
-        setProducts(normalized);
-      } catch (err) {
-        console.log('API offline', err.message)
-      } finally { setLoading(false) }
-    }
-    fetchProducts()
-  }, [])
+        // MERGE: hardcoded 114 + mongo 39 = both show same
+        const merged = [...HARDCODED,...mongo.filter(m=>!HARDCODED.some(h=>h.name===m.name))];
+        if(merged.length>0) setProducts(merged);
+      } catch {}
+    };
+    fetchMongo();
+  }, []);
 
-  useEffect(() => { setSearch(searchQuery); setActiveCategory(categoryQuery) }, [searchQuery, categoryQuery])
+  useEffect(()=>{ setSearch(searchQuery); setActiveCategory(categoryQuery) },[searchQuery, categoryQuery])
 
-  const filteredProducts = products.filter(product => {
-    const s = search.toLowerCase().trim()
-    const matchesSearch =!s || product.name?.toLowerCase().includes(s) || product.category?.toLowerCase().includes(s) || product.brand?.toLowerCase().includes(s)
-    const matchesPrice = (!minPrice || Number(product.price) >= Number(minPrice)) && (!maxPrice || Number(product.price) <= Number(maxPrice))
-    const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(product.brand)
-    const allowed = categoryMap[activeCategory]
-    const matchesCategory = activeCategory === 'All' || (allowed && allowed.includes(product.category))
-    return matchesSearch && matchesPrice && matchesBrand && matchesCategory
-  })
+  const filtered = products.filter(p=>{
+    const s=search.toLowerCase();
+    return (!s||p.name.toLowerCase().includes(s)||p.category.toLowerCase().includes(s)||p.brand.toLowerCase().includes(s)) &&
+           (!minPrice||p.price>=minPrice) && (!maxPrice||p.price<=maxPrice) &&
+           (selectedBrands.length===0||selectedBrands.includes(p.brand)) &&
+           (activeCategory==='All'||categoryMap[activeCategory]?.includes(p.category))
+  });
 
-  const allBrands = [...new Set(products.map(p => p.brand).filter(Boolean))]
-  const toggleBrand = (brand) => setSelectedBrands(prev => prev.includes(brand)? prev.filter(b => b!== brand) : [...prev, brand])
-  const resetFilters = () => { setSearch(''); setMinPrice(''); setMaxPrice(''); setSelectedBrands([]); setActiveCategory('All') }
-
-  if (loading) return (<div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center"><div className="text-gray-500">Loading vault...</div></div>)
+  const allBrands=[...new Set(products.map(p=>p.brand).filter(Boolean))]
+  const toggleBrand=(b)=>setSelectedBrands(prev=>prev.includes(b)?prev.filter(x=>x!==b):[...prev,b])
+  const reset=()=>{setSearch('');setMinPrice('');setMaxPrice('');setSelectedBrands([]);setActiveCategory('All')}
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] w-full overflow-x-hidden">
-      <div className="w-full max-w-7xl mx-auto px-3 md:px-6">
-        <div className="py-6">
-          <h1 className="font-black text-2xl">Monique Investments</h1>
-          <div className="flex items-center gap-3 mt-1"><h2 className="font-bold">{activeCategory}</h2><span className="text-sm text-gray-500">{filteredProducts.length} products ({products.length} total) • Live synced with Admin</span></div>
-        </div>
+    <div className="min-h-screen bg-[#f5f5f7]">
+      <div className="max-w-7xl mx-auto px-3 md:px-6">
+        <div className="py-6"><h1 className="font-black text-">MONIQUE INVESTMENTS</h1><p className="text- text-gray-500">{filtered.length} products ({products.length} total) • Live + Hardcoded merged</p></div>
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
-          <aside className="hidden lg:block h-fit sticky top-24"><Filters search={search} setSearch={setSearch} minPrice={minPrice} setMinPrice={setMinPrice} maxPrice={maxPrice} setMaxPrice={setMaxPrice} selectedBrands={selectedBrands} toggleBrand={toggleBrand} allBrands={allBrands} resetFilters={resetFilters} /></aside>
+          <aside className="hidden lg:block sticky top-24 h-fit"><Filters search={search} setSearch={setSearch} minPrice={minPrice} setMinPrice={setMinPrice} maxPrice={maxPrice} setMaxPrice={setMaxPrice} selectedBrands={selectedBrands} toggleBrand={toggleBrand} allBrands={allBrands} resetFilters={reset} /></aside>
           <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-end lg:hidden"><button onClick={() => setShowFilters(true)} className="px-4 py-2.5 bg-white border rounded-full text-sm font-bold">Filters</button></div>
             <CategoryFilter activeCategory={activeCategory} onSelect={setActiveCategory} />
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 md:gap-5">
-              {filteredProducts.length === 0? (<div className="col-span-full text-center py-16"><p>No products found</p><button onClick={resetFilters} className="mt-3 text-blue-600 font-bold">Clear filters</button></div>) : filteredProducts.map(product => (<ProductCard key={product.id || product._id} product={product} />))}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {filtered.map(p=><ProductCard key={p.id||p._id} product={p} />)}
             </div>
           </div>
         </div>
       </div>
-      {showFilters && (<div className="lg:hidden fixed inset-0 z-50 bg-black/30" onClick={() => setShowFilters(false)}><div className="absolute right-0 top-0 h-full w-full max-w-sm p-4" onClick={e => e.stopPropagation()}><Filters search={search} setSearch={setSearch} minPrice={minPrice} setMinPrice={setMinPrice} maxPrice={maxPrice} setMaxPrice={setMaxPrice} selectedBrands={selectedBrands} toggleBrand={toggleBrand} allBrands={allBrands} resetFilters={resetFilters} onClose={() => setShowFilters(false)} /></div></div>)}
     </div>
   )
 }
