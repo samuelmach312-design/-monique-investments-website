@@ -3,13 +3,9 @@ import { useSearchParams } from "react-router-dom"
 import CategoryFilter, { categoryMap } from '../components/CategoryFilter'
 import Filters from '../components/Filters'
 import ProductCard from '../components/ProductCard'
-import axios from 'axios'
-
-const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/$/, '');
-const API = BASE + '/mongo-products';
 
 const HARDCODED_114 = [
-  { id: 1, name: "Grey Casual Brogue Sneakers", price: 3500, category: "Lifestyle", brand: "Monique", image_url: "/images/grey-casual-sneakers.jpg", brandDisplay: "Monique" },
+  { id: 1, name: "Grey Casual Brogue Sneakers", price: 3500, category: "Lifestyle", brand: "Monique", image_url: "/images/grey-casual-sneakers.jpg" },
   { id: 2, name: "Grey Suede High-Top Sneakers", price: 3500, category: "Lifestyle", brand: "Monique", image_url: "/images/grey-suede-high-top-sneakers.jpg" },
   { id: 3, name: "Grey Leather Ankle Boots", price: 5000, category: "Boots", brand: "Monique", image_url: "/images/grey-leather-ankle-boots.jpg" },
   { id: 4, name: "Adidas Megashox Black White", price: 4000, category: "Shoes", brand: "Adidas", image_url: "/images/adidas-megashox-black-white.jpg" },
@@ -129,9 +125,7 @@ export default function Home() {
   const [searchParams] = useSearchParams()
   const searchQuery = searchParams.get('search') || ''
   const categoryQuery = searchParams.get('category') || 'All'
-
-  const [products, setProducts] = useState(HARDCODED_114)
-  const [loading, setLoading] = useState(false)
+  const [products] = useState(HARDCODED_114)
   const [search, setSearch] = useState(searchQuery)
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
@@ -139,37 +133,19 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState(categoryQuery)
   const [showFilters, setShowFilters] = useState(false)
 
-  useEffect(() => {
-    const fetchMongo = async () => {
-      try {
-        const r = await axios.get(API);
-        const mongo = (r.data.products || r.data || []).map(p=>({
-         id: p._id, _id: p._id, name: p.name, price: p.sellingPrice||p.price, sellingPrice: p.sellingPrice||p.price,
-         brand: p.brand||'Monique', category: p.category||'Shoes', image: p.image||p.image_url, image_url: p.image||p.image_url||'/images/monique-logo.png'
-        }));
-        // merge without duplicates by name
-        const merged = [...HARDCODED_114, ...mongo.filter(m=>!HARDCODED_114.some(h=>h.name.toLowerCase()===m.name.toLowerCase()))];
-        setProducts(merged);
-      } catch (e) { setProducts(HARDCODED_114); }
-    };
-    fetchMongo();
-  }, []);
-
   useEffect(()=>{ setSearch(searchQuery); setActiveCategory(categoryQuery) },[searchQuery, categoryQuery])
 
   const filtered = products.filter(p=>{
     const s=search.toLowerCase();
     return (!s||p.name.toLowerCase().includes(s)||p.category.toLowerCase().includes(s)||p.brand.toLowerCase().includes(s)) &&
-           (!minPrice||p.price>=minPrice) && (!maxPrice||p.price<=maxPrice) &&
+           (!minPrice||p.price>=Number(minPrice)) && (!maxPrice||p.price<=Number(maxPrice)) &&
            (selectedBrands.length===0||selectedBrands.includes(p.brand)) &&
-           (activeCategory==='All'||categoryMap[activeCategory]?.includes(p.category))
+           (activeCategory==='All'|| (categoryMap[activeCategory]?.includes(p.category)))
   });
 
   const allBrands=[...new Set(products.map(p=>p.brand).filter(Boolean))]
   const toggleBrand=(b)=>setSelectedBrands(prev=>prev.includes(b)?prev.filter(x=>x!==b):[...prev,b])
   const reset=()=>{setSearch('');setMinPrice('');setMaxPrice('');setSelectedBrands([]);setActiveCategory('All')}
-
-  if(loading) return <div className="min-h-screen flex items-center justify-center font-bold">Loading...</div>
 
   return (
     <div className="min-h-screen bg-[#f5f5f7]">
@@ -184,7 +160,7 @@ export default function Home() {
             <div className="flex justify-end lg:hidden"><button onClick={()=>setShowFilters(true)} className="px-4 py-2 bg-white border rounded-full text-[13px] font-bold">Filters • {filtered.length}</button></div>
             <CategoryFilter activeCategory={activeCategory} onSelect={setActiveCategory} />
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
-              {filtered.map(p=><ProductCard key={p.id||p._id} product={p} />)}
+              {filtered.map(p=><ProductCard key={p.id} product={p} />)}
             </div>
           </div>
         </div>
