@@ -6,7 +6,7 @@ const API = `${BASE}/mongo-products`;
 
 export default function AdminLayout(){
   const [products,setProducts] = useState([]);
-  const [auth,setAuth] = useState(()=>{ try{return JSON.parse(localStorage.getItem('monique_admin'))}catch{return null} }());
+  const [auth,setAuth] = useState(()=>{ try{return JSON.parse(localStorage.getItem('monique_admin'))}catch(e){return null} }());
   const [phone,setPhone] = useState('');
   const [search,setSearch] = useState('');
   const [filterBrand,setFilterBrand] = useState('All');
