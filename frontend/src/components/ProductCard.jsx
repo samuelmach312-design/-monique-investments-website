@@ -31,7 +31,8 @@ export default function ProductCard({ product }) {
           alt={product.name}
           draggable={false}
           onError={(e)=>{ e.target.onerror=null; e.target.src=FALLBACK; }}
-          className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain object-center"
+          style={{transform: 'translateZ(0)'}} 
           loading="lazy"
         />
         <div className="absolute top-3 left-3 bg-white/95 px-3 py-1 rounded-full text- font-black shadow-sm border">
