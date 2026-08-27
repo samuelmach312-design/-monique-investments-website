@@ -159,7 +159,7 @@ export default function Home() {
           <div className="flex flex-col gap-4">
             <div className="flex justify-end lg:hidden"><button onClick={()=>setShowFilters(true)} className="px-4 py-2 bg-white border rounded-full text-[13px] font-bold">Filters • {filtered.length}</button></div>
             <CategoryFilter activeCategory={activeCategory} onSelect={setActiveCategory} />
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-2 md:gap-3">
               {filtered.map(p=><ProductCard key={p.id} product={p} />)}
             </div>
           </div>
