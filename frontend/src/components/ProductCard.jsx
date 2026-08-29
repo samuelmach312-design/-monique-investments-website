@@ -29,14 +29,14 @@ export default function ProductCard({ product }) {
   return (
     <div className="group bg-white rounded-lg border border-gray-100 hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:border-gray-200 transition-all duration-200 flex flex-col overflow-hidden h-full">
       {/* Image - Jumia style: small, centered, white bg */}
-      <Link to={`/product/${product.id || product._id}`} className="relative bg-white h-40 md:h-48 flex items-center justify-center p-3 overflow-hidden">
+      <Link to={`/product/${product.id || product._id}`} className="relative bg-white h-52 md:h-60 flex items-center justify-center p-4 overflow-hidden">
         <img
           src={img}
           alt={product.name}
           loading="lazy"
           draggable={false}
           onError={(e)=>{ e.target.onerror=null; e.target.src=FALLBACK; }}
-          className="max-w-[78%] max-h-[56%] w-auto h-auto object-contain object-center group-hover:scale-[1.02] transition-transform duration-200"
+          className="max-w-[88%] max-h-[88%] w-auto h-auto object-contain object-center group-hover:scale-[1.02] transition-transform duration-200"
         />
         {/* Jumia style discount badge - top right orange */}
         <div className="absolute top-2 right-2 bg-[#feefde] text-[#f68b1e] text-[11px] font-bold px-1.5 py-0.5 rounded">
